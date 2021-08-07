@@ -1,12 +1,9 @@
-import edu.princeton.cs.algs4.Digraph;
-import edu.princeton.cs.algs4.In;
-import edu.princeton.cs.algs4.SET;
-import edu.princeton.cs.algs4.Topological;
+import edu.princeton.cs.algs4.*;
 
 public class WordNet {
 
-    private SET<String> nouns = new SET<String>();
-    private Digraph wordNet;
+    private BST<String, Integer> nouns = new BST<String, Integer>();
+    private Digraph dag;
 
     // constructor takes the name of the two input files
     public WordNet(String synsets, String hypernyms) {
@@ -14,17 +11,17 @@ public class WordNet {
             throw new IllegalArgumentException();
         }
         In in = new In(synsets);
-        int size = 0;
+        int id = 0;
         while (in.hasNextLine()) {
             String line = in.readLine();
             String[] fields = line.split(",");
             String[] synonyms = fields[1].split("\s");
             for (String noun: synonyms) {
-                this.nouns.add(noun);
+                this.nouns.put(noun, id);
             }
-            size++;
+            id++;
         }
-        this.wordNet = new Digraph(size);
+        this.dag = new Digraph(id);
         in = new In(hypernyms);
         while (in.hasNextLine()) {
             String[] line = in.readLine().split(",");
@@ -32,18 +29,18 @@ public class WordNet {
             for (int j = 0; j < line.length; j++) {
                 if (j != 0) {
                     int hns = Integer.parseInt(line[j]);
-                    this.wordNet.addEdge(ss, hns);
+                    this.dag.addEdge(ss, hns);
                 }
             }
         }
-        if (! (new Topological(this.wordNet).hasOrder()) ) {
+        if (! (new Topological(this.dag).hasOrder()) ) {
                 throw new IllegalArgumentException();
         }
     }
 
     // returns all WordNet nouns
     public Iterable<String> nouns() {
-        return this.nouns;
+        return this.nouns.keys();
     }
 
     // is the word a WordNet noun?
