@@ -1,14 +1,18 @@
 import edu.princeton.cs.algs4.Digraph;
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.SET;
+import edu.princeton.cs.algs4.Topological;
 
 public class WordNet {
 
-    public SET<String> nouns = new SET<String>();
-    public Digraph wordNet;
+    private SET<String> nouns = new SET<String>();
+    private Digraph wordNet;
 
     // constructor takes the name of the two input files
     public WordNet(String synsets, String hypernyms) {
+        if (synsets == null || hypernyms == null) {
+            throw new IllegalArgumentException();
+        }
         In in = new In(synsets);
         int size = 0;
         while (in.hasNextLine()) {
@@ -31,6 +35,9 @@ public class WordNet {
                     this.wordNet.addEdge(ss, hns);
                 }
             }
+        }
+        if (! (new Topological(this.wordNet).hasOrder()) ) {
+                throw new IllegalArgumentException();
         }
     }
 
