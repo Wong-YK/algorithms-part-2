@@ -27,4 +27,12 @@ public class WordNetTest {
         assertFalse(wn.isNoun("snake"));
     }
 
+    @Test
+    //sap of length 2
+    public void sapTest1() {
+        WordNet wn = new WordNet("organisms_synsets.txt", "organisms_hypernyms.txt");
+        String commonAncestor = wn.sap("human", "chimpanzee");
+        assertEquals("ape", commonAncestor);
+    }
+
 }
