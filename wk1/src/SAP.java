@@ -1,7 +1,5 @@
 import edu.princeton.cs.algs4.BreadthFirstDirectedPaths;
-import edu.princeton.cs.algs4.Digraph;
-import edu.princeton.cs.algs4.Queue;
-import edu.princeton.cs.algs4.Topological;
+import edu.princeton.cs.algs4.*;
 
 public class SAP {
 
@@ -25,7 +23,14 @@ public class SAP {
 
     // length of shortest ancestral path between v and w; -1 if no such path
     public int length(int v, int w) {
-        return -1;
+        int sca = this.ancestor(v, w);
+        BreadthFirstDirectedPaths bfdp = new BreadthFirstDirectedPaths(this.r, sca);
+        int toV = bfdp.distTo(v);
+        int toW = bfdp.distTo(w);
+        if ( toV == -1 || toW == -1) {
+            return -1;
+        }
+        return toV + toW;
     }
 
     // a common ancestor of v and w that participates in a shortest ancestral path; -1 if no such path
@@ -57,6 +62,20 @@ public class SAP {
     // a common ancestor that participates in shortest ancestral path; -1 if no such path
     public int ancestor(Iterable<Integer> v, Iterable<Integer> w) {
         return -1;
+    }
+
+    // returns copy of a digraph
+    private Digraph copyExtra(Digraph g, Iterable<Integer> v, Iterable<Integer> w) {
+        int V = this.g.V();
+        Digraph result = new Digraph(V + 2);
+        for (int vertex = 0; vertex < V; vertex++) {
+            for (int adjacentVertex: this.g.adj(vertex)) {
+                result.addEdge(vertex, adjacentVertex);
+            }
+        }
+        for (int vertex: v) { result.addEdge(V+1, vertex); }
+        for (int vertex: w) { result.addEdge(V+2, vertex); }
+        return result;
     }
 
     // do unit testing of this class
