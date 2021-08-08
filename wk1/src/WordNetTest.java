@@ -35,4 +35,43 @@ public class WordNetTest {
         assertEquals("ape", commonAncestor);
     }
 
+    @Test
+    //sap of length 3
+    public void sapTest2() {
+        WordNet wn = new WordNet("organisms_synsets.txt", "organisms_hypernyms.txt");
+        String commonAncestor = wn.sap("whale", "chimpanzee");
+        assertEquals("mammal", commonAncestor);
+    }
+
+    @Test
+    //sap of length 3 between external and internal vertices
+    public void sapTest3() {
+        WordNet wn = new WordNet("organisms_synsets.txt", "organisms_hypernyms.txt");
+        String commonAncestor = wn.sap("ape", "fungus");
+        assertEquals("organism", commonAncestor);
+    }
+
+    @Test
+    //distance of 2
+    public void distanceTest1() {
+        WordNet wn = new WordNet("organisms_synsets.txt", "organisms_hypernyms.txt");
+        assertEquals(2, wn.distance("mammal", "fungus"));
+    }
+
+    @Test
+    //distance of 2 with vertices reversed
+    public void distanceTest2() {
+        WordNet wn = new WordNet("organisms_synsets.txt", "organisms_hypernyms.txt");
+        assertEquals(2, wn.distance("fungus", "mammal"));
+    }
+
+    @Test
+    //distance of 4
+    public void distanceTest3() {
+        WordNet wn = new WordNet("organisms_synsets.txt", "organisms_hypernyms.txt");
+        assertEquals(4, wn.distance("human", "fungus"));
+    }
+
+
+
 }

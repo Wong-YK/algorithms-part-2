@@ -6,6 +6,7 @@ public class WordNet {
     private BST<String, Integer> nounsBST = new BST<String, Integer>();
     private ArrayList<String> synsetsList = new ArrayList<String>();
     private Digraph dag;
+    private Digraph reverse;
     private int root;
 
     // constructor takes the name of the two input files
@@ -38,13 +39,13 @@ public class WordNet {
                 }
             }
         }
+        this.reverse = this.dag.reverse();
         Topological t = new Topological(this.dag);
         if (!t.hasOrder()) {
                 throw new IllegalArgumentException();
         }
         for (int vertex: t.order()) {
             this.root = vertex;
-            break;
         }
     }
 
@@ -60,7 +61,12 @@ public class WordNet {
 
     // distance between nounA and nounB (defined below)
     public int distance(String nounA, String nounB) {
-        return -1;
+        String sca = this.sap(nounA, nounB);
+        int idSca = nounsBST.get(sca);
+        int idA = nounsBST.get(nounA);
+        int idB = nounsBST.get(nounB);
+        BreadthFirstDirectedPaths bfds = new BreadthFirstDirectedPaths(this.reverse, idSca);
+        return bfds.distTo(idA) + bfds.distTo(idB);
     }
 
     // a synset (second field of synsets.txt) that is the common ancestor of nounA and nounB
@@ -70,13 +76,12 @@ public class WordNet {
         int idB = this.nounsBST.get(nounB);
         BreadthFirstDirectedPaths pathsA = new BreadthFirstDirectedPaths(this.dag, idA);
         BreadthFirstDirectedPaths pathsB = new BreadthFirstDirectedPaths(this.dag, idB);
-        Digraph reverse = this.dag.reverse();
         Queue<Integer> q = new Queue<>();
         q.enqueue(this.root);
         int currentVertex = -1;
         while (!q.isEmpty()) {
             currentVertex = q.dequeue();
-            Iterable<Integer> adjacentVertices = reverse.adj(currentVertex);
+            Iterable<Integer> adjacentVertices = this.reverse.adj(currentVertex);
             for (int vertex: adjacentVertices) {
                 if (pathsA.hasPathTo(vertex) && pathsB.hasPathTo(vertex)) {
                     q.enqueue(vertex);
