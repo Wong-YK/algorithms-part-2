@@ -56,11 +56,17 @@ public class WordNet {
 
     // is the word a WordNet noun?
     public boolean isNoun(String word) {
+        if (word == null) {
+            throw new IllegalArgumentException();
+        }
         return this.nounsBST.contains(word);
     }
 
     // distance between nounA and nounB (defined below)
     public int distance(String nounA, String nounB) {
+        if (nounA == null || nounB == null || !this.isNoun(nounA) || !this.isNoun(nounB)) {
+            throw new IllegalArgumentException();
+        }
         String sca = this.sap(nounA, nounB);
         int idSca = nounsBST.get(sca);
         int idA = nounsBST.get(nounA);
@@ -72,6 +78,9 @@ public class WordNet {
     // a synset (second field of synsets.txt) that is the common ancestor of nounA and nounB
     // in a shortest ancestral path (defined below)
     public String sap(String nounA, String nounB) {
+        if (nounA == null || nounB == null || !this.isNoun(nounA) || !this.isNoun(nounB)) {
+            throw new IllegalArgumentException();
+        }
         int idA = this.nounsBST.get(nounA);
         int idB = this.nounsBST.get(nounB);
         BreadthFirstDirectedPaths pathsA = new BreadthFirstDirectedPaths(this.dag, idA);
@@ -93,7 +102,5 @@ public class WordNet {
 
     // do unit testing of this class
     public static void main(String[] args) {
-        WordNet wn = new WordNet("synsets.txt", "hypernyms.txt");
-        System.out.println("done");
     }
 }
