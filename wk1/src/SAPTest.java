@@ -34,5 +34,19 @@ public class SAPTest {
         assertEquals(1, sap.ancestor(3, 6));
     }
 
+    @Test
+    // no common ancestor
+    public void ancestorTest3() {
+        Digraph g = new Digraph(7);
+        g.addEdge(1, 0);
+        g.addEdge(3, 0);
+        g.addEdge(3, 1);
+        g.addEdge(4, 1);
+        g.addEdge(5, 4);
+        g.addEdge(6, 4);
+        SAP sap = new SAP(g);
+        assertEquals(-1, sap.ancestor(2, 3));
+    }
+
 
 }
