@@ -4,6 +4,7 @@ import edu.princeton.cs.algs4.*;
 public class SAP {
 
     private Digraph g;
+    private int v;
     private Digraph r;
     private int root;
 
@@ -13,6 +14,7 @@ public class SAP {
             throw new IllegalArgumentException();
         }
         this.g = G;
+        this.v = this.g.V();
         this.r = G.reverse();
         Topological t = new Topological(this.r);
         for (int vertex: t.order()) {
@@ -61,20 +63,21 @@ public class SAP {
 
     // a common ancestor that participates in shortest ancestral path; -1 if no such path
     public int ancestor(Iterable<Integer> v, Iterable<Integer> w) {
-        return -1;
+        Digraph copyDigraph = copyVirtual(v, w);
+        SAP copySAP = new SAP(copyDigraph);
+        return copySAP.ancestor(this.v, this.v + 1);
     }
 
     // returns copy of a digraph
-    private Digraph copyExtra(Digraph g, Iterable<Integer> v, Iterable<Integer> w) {
-        int V = this.g.V();
-        Digraph result = new Digraph(V + 2);
-        for (int vertex = 0; vertex < V; vertex++) {
+    private Digraph copyVirtual(Iterable<Integer> v, Iterable<Integer> w) {
+        Digraph result = new Digraph(this.v + 2);
+        for (int vertex = 0; vertex < this.v; vertex++) {
             for (int adjacentVertex: this.g.adj(vertex)) {
                 result.addEdge(vertex, adjacentVertex);
             }
         }
-        for (int vertex: v) { result.addEdge(V+1, vertex); }
-        for (int vertex: w) { result.addEdge(V+2, vertex); }
+        for (int vertex: v) { result.addEdge(this.v, vertex); }
+        for (int vertex: w) { result.addEdge(this.v + 1, vertex); }
         return result;
     }
 
