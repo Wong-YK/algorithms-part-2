@@ -1,5 +1,8 @@
 import edu.princeton.cs.algs4.Digraph;
 import org.junit.Test;
+
+import java.util.ArrayList;
+
 import static org.junit.Assert.*;
 
 public class SAPTest {
@@ -61,6 +64,29 @@ public class SAPTest {
         g.addEdge(6, 4);
         SAP sap = new SAP(g);
         assertEquals(1, sap.ancestor(1, 3));
+    }
+
+
+    @Test
+    // subsets method; common ancestor is 1 with a SAP of length 2
+    public void ancestorTest5() {
+        Digraph g = new Digraph(7);
+        g.addEdge(1, 0);
+        g.addEdge(2, 0);
+        g.addEdge(3, 0);
+        g.addEdge(3, 1);
+        g.addEdge(4, 1);
+        g.addEdge(5, 4);
+        g.addEdge(6, 4);
+        ArrayList<Integer> v = new ArrayList<Integer>();
+        v.add(3);
+        v.add(2);
+        ArrayList<Integer> w = new ArrayList<Integer>();
+        w.add(4);
+        w.add(5);
+        w.add(6);
+        SAP sap = new SAP(g);
+        assertEquals(1, sap.ancestor(v, w));
     }
 
     @Test
