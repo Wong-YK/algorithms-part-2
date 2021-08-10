@@ -63,6 +63,9 @@ public class SAP {
 
     // a common ancestor that participates in shortest ancestral path; -1 if no such path
     public int ancestor(Iterable<Integer> v, Iterable<Integer> w) {
+        if (v == null || w == null) {
+            throw new IllegalArgumentException();
+        }
         Digraph copyDigraph = copyVirtual(v, w);
         SAP copySAP = new SAP(copyDigraph);
         return copySAP.ancestor(this.v, this.v + 1);

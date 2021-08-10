@@ -90,6 +90,67 @@ public class SAPTest {
     }
 
     @Test
+    // subsets method; shortest common ancestor is 0 with a SAP of 2
+    public void ancestorTest7() {
+        Digraph g = new Digraph(7);
+        g.addEdge(1, 0);
+        g.addEdge(2, 0);
+        g.addEdge(3, 0);
+        g.addEdge(3, 1);
+        g.addEdge(4, 1);
+        g.addEdge(5, 4);
+        g.addEdge(6, 4);
+        ArrayList<Integer> v = new ArrayList<Integer>();
+        v.add(2);
+        ArrayList<Integer> w = new ArrayList<Integer>();
+        w.add(3);
+        w.add(4);
+        w.add(6);
+        SAP sap = new SAP(g);
+        assertEquals(0, sap.ancestor(v, w));
+    }
+
+    @Test
+    // subsets method; subsets overlap
+    public void ancestorTest6() {
+        Digraph g = new Digraph(7);
+        g.addEdge(1, 0);
+        g.addEdge(2, 0);
+        g.addEdge(3, 0);
+        g.addEdge(3, 1);
+        g.addEdge(4, 1);
+        g.addEdge(5, 4);
+        g.addEdge(6, 4);
+        ArrayList<Integer> v = new ArrayList<Integer>();
+        v.add(3);
+        v.add(2);
+        ArrayList<Integer> w = new ArrayList<Integer>();
+        w.add(3);
+        w.add(5);
+        w.add(6);
+        SAP sap = new SAP(g);
+        assertEquals(3, sap.ancestor(v, w));
+    }
+
+    @Test (expected = IllegalArgumentException.class)
+    // subsets method; null argument throws IllegalArgument exception
+    public void ancestorTest8() {
+        Digraph g = new Digraph(7);
+        g.addEdge(1, 0);
+        g.addEdge(2, 0);
+        g.addEdge(3, 0);
+        g.addEdge(3, 1);
+        g.addEdge(4, 1);
+        g.addEdge(5, 4);
+        g.addEdge(6, 4);
+        ArrayList<Integer> v = new ArrayList<Integer>();
+        v.add(3);
+        v.add(2);
+        SAP sap = new SAP(g);
+        sap.ancestor(v, null);
+    }
+
+    @Test
     // distance is 2
     public void lengthTest1() {
         Digraph g = new Digraph(7);
