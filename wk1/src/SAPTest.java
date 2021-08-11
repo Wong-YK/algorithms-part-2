@@ -195,4 +195,26 @@ public class SAPTest {
         assertEquals(2, sap.length(3, 2));
     }
 
+    @Test
+    // subsets method; common ancestor is 1 with a SAP of length 2
+    public void lengthTest4() {
+        Digraph g = new Digraph(7);
+        g.addEdge(1, 0);
+        g.addEdge(2, 0);
+        g.addEdge(3, 0);
+        g.addEdge(3, 1);
+        g.addEdge(4, 1);
+        g.addEdge(5, 4);
+        g.addEdge(6, 4);
+        ArrayList<Integer> v = new ArrayList<Integer>();
+        v.add(3);
+        v.add(2);
+        ArrayList<Integer> w = new ArrayList<Integer>();
+        w.add(4);
+        w.add(5);
+        w.add(6);
+        SAP sap = new SAP(g);
+        assertEquals(2, sap.length(v, w));
+    }
+
 }
