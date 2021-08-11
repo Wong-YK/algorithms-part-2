@@ -58,7 +58,9 @@ public class SAP {
 
     // length of shortest ancestral path between any vertex in v and any vertex in w; -1 if no such path
     public int length(Iterable<Integer> v, Iterable<Integer> w) {
-        return -1;
+        Digraph copyDigraph = this.copyVirtual(v, w);
+        SAP copySap = new SAP(copyDigraph);
+        return copySap.length(this.v, this.v + 1) - 2;
     }
 
     // a common ancestor that participates in shortest ancestral path; -1 if no such path
