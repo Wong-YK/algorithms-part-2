@@ -25,6 +25,7 @@ public class SAP {
 
     // length of shortest ancestral path between v and w; -1 if no such path
     public int length(int v, int w) {
+        if ( v < 0 || v >= this.v || w < 0 || w >= this.v ) {throw new IllegalArgumentException(); }
         int sca = this.ancestor(v, w);
         BreadthFirstDirectedPaths bfdp = new BreadthFirstDirectedPaths(this.r, sca);
         int toV = bfdp.distTo(v);
@@ -37,6 +38,7 @@ public class SAP {
 
     // a common ancestor of v and w that participates in a shortest ancestral path; -1 if no such path
     public int ancestor(int v, int w) {
+        if ( v < 0 || v >= this.v || w < 0 || w >= this.v ) {throw new IllegalArgumentException(); }
         BreadthFirstDirectedPaths bfdpV = new BreadthFirstDirectedPaths(this.g, v);
         BreadthFirstDirectedPaths bfdpW = new BreadthFirstDirectedPaths(this.g, w);
         if ( !(bfdpV.hasPathTo(this.root) && bfdpW.hasPathTo(this.root)) ) {
