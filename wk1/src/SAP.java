@@ -18,27 +18,27 @@ public class SAP {
         this.r = G.reverse();
         Topological t = new Topological(this.r);
         for (int vertex: t.order()) {
-            this.root = vertex;
-            break;
+            if (this.r.outdegree(vertex) != 0) {
+                this.root = vertex;
+                break;
+            }
         }
     }
 
     // length of shortest ancestral path between v and w; -1 if no such path
     public int length(int v, int w) {
-        if ( v < 0 || v >= this.v || w < 0 || w >= this.v ) {throw new IllegalArgumentException(); }
+        if ( v < -1 || v >= this.v || w < -1 || w >= this.v ) {throw new IllegalArgumentException(); }
         int sca = this.ancestor(v, w);
+        if (v == -1 || w == -1 || sca == -1) { return -1; }
         BreadthFirstDirectedPaths bfdp = new BreadthFirstDirectedPaths(this.r, sca);
         int toV = bfdp.distTo(v);
         int toW = bfdp.distTo(w);
-        if ( toV == -1 || toW == -1) {
-            return -1;
-        }
         return toV + toW;
     }
 
     // a common ancestor of v and w that participates in a shortest ancestral path; -1 if no such path
     public int ancestor(int v, int w) {
-        if ( v < 0 || v >= this.v || w < 0 || w >= this.v ) {throw new IllegalArgumentException(); }
+        if ( v < -1 || v >= this.v || w < -1 || w >= this.v ) {throw new IllegalArgumentException(); }
         BreadthFirstDirectedPaths bfdpV = new BreadthFirstDirectedPaths(this.g, v);
         BreadthFirstDirectedPaths bfdpW = new BreadthFirstDirectedPaths(this.g, w);
         if ( !(bfdpV.hasPathTo(this.root) && bfdpW.hasPathTo(this.root)) ) {
@@ -93,6 +93,13 @@ public class SAP {
 
     // do unit testing of this class
     public static void main(String[] args) {
-
+        In in = new In("digraph1.txt");
+        Digraph G = new Digraph(in);
+        SAP sap = new SAP(G);
+        int v = 1;
+        int w = 6;
+        int length   = sap.length(v, w);
+        int ancestor = sap.ancestor(v, w);
+        StdOut.printf("length = %d, ancestor = %d\n", length, ancestor);
     }
 }
