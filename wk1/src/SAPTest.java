@@ -281,4 +281,44 @@ public class SAPTest {
         assertEquals(0, sap.length(v, w));
     }
 
+    @Test (expected = IllegalArgumentException.class)
+    // subsets method; null argument throws IllegalArgument exception
+    public void lengthTest7() {
+        Digraph g = new Digraph(7);
+        g.addEdge(1, 0);
+        g.addEdge(2, 0);
+        g.addEdge(3, 0);
+        g.addEdge(3, 1);
+        g.addEdge(4, 1);
+        g.addEdge(5, 4);
+        g.addEdge(6, 4);
+        ArrayList<Integer> v = new ArrayList<Integer>();
+        v.add(3);
+        v.add(2);
+        ArrayList<Integer> w = new ArrayList<Integer>();
+        w.add(null);
+        w.add(5);
+        w.add(6);
+        SAP sap = new SAP(g);
+        sap.length(v, w);
+    }
+
+    @Test (expected = IllegalArgumentException.class)
+    // subsets method; iterable contains a null item
+    public void lengthTest8() {
+        Digraph g = new Digraph(7);
+        g.addEdge(1, 0);
+        g.addEdge(2, 0);
+        g.addEdge(3, 0);
+        g.addEdge(3, 1);
+        g.addEdge(4, 1);
+        g.addEdge(5, 4);
+        g.addEdge(6, 4);
+        ArrayList<Integer> v = new ArrayList<Integer>();
+        v.add(3);
+        v.add(2);
+        SAP sap = new SAP(g);
+        sap.ancestor(v, null);
+    }
+
 }
