@@ -58,6 +58,9 @@ public class SAP {
 
     // length of shortest ancestral path between any vertex in v and any vertex in w; -1 if no such path
     public int length(Iterable<Integer> v, Iterable<Integer> w) {
+        if (v == null || w == null) { throw new IllegalArgumentException(); }
+        for (Object vertex: v) { if (vertex == null) { throw new IllegalArgumentException(); } }
+        for (Object vertex: w) { if (vertex == null) { throw new IllegalArgumentException(); } }
         Digraph copyDigraph = this.copyVirtual(v, w);
         SAP copySap = new SAP(copyDigraph);
         return copySap.length(this.v, this.v + 1) - 2;
@@ -65,15 +68,9 @@ public class SAP {
 
     // a common ancestor that participates in shortest ancestral path; -1 if no such path
     public int ancestor(Iterable<Integer> v, Iterable<Integer> w) {
-        if (v == null || w == null) {
-            throw new IllegalArgumentException();
-        }
-        for (Object vertex: v) {
-            if (vertex == null) { throw new IllegalArgumentException(); }
-        }
-        for (Object vertex: w) {
-            if (vertex == null) { throw new IllegalArgumentException(); }
-        }
+        if (v == null || w == null) { throw new IllegalArgumentException(); }
+        for (Object vertex: v) { if (vertex == null) { throw new IllegalArgumentException(); } }
+        for (Object vertex: w) { if (vertex == null) { throw new IllegalArgumentException(); } }
         Digraph copyDigraph = copyVirtual(v, w);
         SAP copySAP = new SAP(copyDigraph);
         return copySAP.ancestor(this.v, this.v + 1);
