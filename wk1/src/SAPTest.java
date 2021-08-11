@@ -217,4 +217,46 @@ public class SAPTest {
         assertEquals(2, sap.length(v, w));
     }
 
+    @Test
+    // subsets method; common ancestor is 0 with a SAP of length 4
+    public void lengthTest5() {
+        Digraph g = new Digraph(7);
+        g.addEdge(1, 0);
+        g.addEdge(2, 0);
+        g.addEdge(3, 0);
+        g.addEdge(3, 1);
+        g.addEdge(4, 1);
+        g.addEdge(5, 4);
+        g.addEdge(6, 4);
+        ArrayList<Integer> v = new ArrayList<Integer>();
+        v.add(5);
+        v.add(6);
+        ArrayList<Integer> w = new ArrayList<Integer>();
+        w.add(2);
+        SAP sap = new SAP(g);
+        assertEquals(4, sap.length(v, w));
+    }
+
+    @Test
+    // overlapping subsets
+    public void lengthTest6() {
+        Digraph g = new Digraph(7);
+        g.addEdge(1, 0);
+        g.addEdge(2, 0);
+        g.addEdge(3, 0);
+        g.addEdge(3, 1);
+        g.addEdge(4, 1);
+        g.addEdge(5, 4);
+        g.addEdge(6, 4);
+        ArrayList<Integer> v = new ArrayList<Integer>();
+        v.add(4);
+        v.add(5);
+        v.add(6);
+        ArrayList<Integer> w = new ArrayList<Integer>();
+        w.add(3);
+        w.add(4);
+        SAP sap = new SAP(g);
+        assertEquals(0, sap.length(v, w));
+    }
+
 }
