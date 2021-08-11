@@ -68,6 +68,12 @@ public class SAP {
         if (v == null || w == null) {
             throw new IllegalArgumentException();
         }
+        for (Object vertex: v) {
+            if (vertex == null) { throw new IllegalArgumentException(); }
+        }
+        for (Object vertex: w) {
+            if (vertex == null) { throw new IllegalArgumentException(); }
+        }
         Digraph copyDigraph = copyVirtual(v, w);
         SAP copySAP = new SAP(copyDigraph);
         return copySAP.ancestor(this.v, this.v + 1);
