@@ -3,10 +3,10 @@ import java.util.ArrayList;
 
 public class WordNet {
 
-    private BST<String, Integer> nounsBST = new BST<String, Integer>();
-    private ArrayList<String> synsetsList = new ArrayList<String>();
-    private Digraph dag;
-    private Digraph reverse;
+    private final BST<String, ArrayList<Integer>> nounsBST = new BST<String, ArrayList<Integer>>();
+    private final ArrayList<String> synsetsList = new ArrayList<String>();
+    private final Digraph dag;
+    private final Digraph reverse;
     private int root;
 
     // constructor takes the name of the two input files
@@ -21,9 +21,16 @@ public class WordNet {
             String[] fields = line.split(",");
             String synset = fields[1];
             this.synsetsList.add(synset);
-            String[] synonyms = fields[1].split("\s");
+            String[] synonyms = synset.split("\s");
             for (String noun: synonyms) {
-                this.nounsBST.put(noun, id);
+                if (this.nounsBST.contains(noun)) {
+                    this.nounsBST.get(noun).add(id);
+                }
+                else {
+                    ArrayList<Integer> value = new ArrayList<Integer>();
+                    value.add(id);
+                    this.nounsBST.put(noun, value);
+                }
             }
             id++;
         }
@@ -32,20 +39,23 @@ public class WordNet {
         while (in.hasNextLine()) {
             String[] line = in.readLine().split(",");
             int ss = Integer.parseInt(line[0]);
-            for (int j = 0; j < line.length; j++) {
-                if (j != 0) {
-                    int hns = Integer.parseInt(line[j]);
-                    this.dag.addEdge(ss, hns);
-                }
+            for (int j = 1; j < line.length; j++) {
+                int hns = Integer.parseInt(line[j]);
+                this.dag.addEdge(ss, hns);
             }
         }
         this.reverse = this.dag.reverse();
-        Topological t = new Topological(this.dag);
+        Topological t = new Topological(this.reverse);
         if (!t.hasOrder()) {
                 throw new IllegalArgumentException();
         }
-        for (int vertex: t.order()) {
-            this.root = vertex;
+        else {
+            for (int vertex: t.order()) {
+                if (this.reverse.outdegree(vertex) != 0) {
+                    this.root = vertex;
+                    break;
+                }
+            }
         }
     }
 
@@ -68,11 +78,30 @@ public class WordNet {
             throw new IllegalArgumentException();
         }
         String sca = this.sap(nounA, nounB);
-        int idSca = nounsBST.get(sca);
-        int idA = nounsBST.get(nounA);
-        int idB = nounsBST.get(nounB);
-        BreadthFirstDirectedPaths bfds = new BreadthFirstDirectedPaths(this.reverse, idSca);
-        return bfds.distTo(idA) + bfds.distTo(idB);
+        String nounSca = sca.split("\s")[0];
+        ArrayList<Integer> idScas = nounsBST.get(nounSca);
+        int idSCA = -1;
+        for (int id: idScas) {
+            if (synsetsList.get(id).equals(sca)) {
+                idSCA = id;
+            }
+        }
+        ArrayList<Integer> idAs = nounsBST.get(nounA);
+        ArrayList<Integer> idBs = nounsBST.get(nounB);
+        BreadthFirstDirectedPaths bfds = new BreadthFirstDirectedPaths(this.reverse, idSCA);
+        int minDist = Integer.MAX_VALUE;
+        for (int idA: idAs) {
+            for (int idB: idBs) {
+                if (bfds.hasPathTo(idA) && bfds.hasPathTo(idB)) {
+                    int dist = bfds.distTo(idA) + bfds.distTo(idB);
+                    if (dist < minDist) {
+                        minDist = dist;
+                    }
+                }
+            }
+        }
+
+        return minDist;
     }
 
     // a synset (second field of synsets.txt) that is the common ancestor of nounA and nounB
@@ -81,23 +110,41 @@ public class WordNet {
         if (nounA == null || nounB == null || !this.isNoun(nounA) || !this.isNoun(nounB)) {
             throw new IllegalArgumentException();
         }
-        int idA = this.nounsBST.get(nounA);
-        int idB = this.nounsBST.get(nounB);
-        BreadthFirstDirectedPaths pathsA = new BreadthFirstDirectedPaths(this.dag, idA);
-        BreadthFirstDirectedPaths pathsB = new BreadthFirstDirectedPaths(this.dag, idB);
-        Queue<Integer> q = new Queue<>();
+        ArrayList<Integer> idAS = this.nounsBST.get(nounA);
+        ArrayList<Integer> idBS = this.nounsBST.get(nounB);
+        BreadthFirstDirectedPaths paths = new BreadthFirstDirectedPaths(this.reverse, this.root);
+        Queue<Integer> q = new Queue<Integer>();
         q.enqueue(this.root);
         int currentVertex = -1;
         while (!q.isEmpty()) {
             currentVertex = q.dequeue();
             Iterable<Integer> adjacentVertices = this.reverse.adj(currentVertex);
             for (int vertex: adjacentVertices) {
-                if (pathsA.hasPathTo(vertex) && pathsB.hasPathTo(vertex)) {
+                if (isACommonAncestor(vertex, idAS, idBS)) {
                     q.enqueue(vertex);
                 }
             }
         }
         return this.synsetsList.get(currentVertex);
+    }
+
+    private boolean isACommonAncestor(int v, Iterable<Integer> nounsA, Iterable<Integer> nounsB) {
+        BreadthFirstDirectedPaths bfdp = new BreadthFirstDirectedPaths(this.reverse, v);
+        boolean resultA = false;
+        for (int noun: nounsA) {
+            if (bfdp.hasPathTo(noun)) {
+                resultA = true;
+                break;
+            }
+        }
+        boolean resultB = false;
+        for (int noun: nounsB) {
+            if (bfdp.hasPathTo(noun)) {
+                resultB = true;
+                break;
+            }
+        }
+        return resultA && resultB;
     }
 
     // do unit testing of this class
