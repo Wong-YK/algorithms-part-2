@@ -1,4 +1,9 @@
-import edu.princeton.cs.algs4.*;
+import edu.princeton.cs.algs4.BST;
+import edu.princeton.cs.algs4.Digraph;
+import edu.princeton.cs.algs4.In;
+import edu.princeton.cs.algs4.Topological;
+import edu.princeton.cs.algs4.BreadthFirstDirectedPaths;
+import edu.princeton.cs.algs4.Queue;
 import java.util.ArrayList;
 
 public class WordNet {
@@ -21,7 +26,7 @@ public class WordNet {
             String[] fields = line.split(",");
             String synset = fields[1];
             this.synsetsList.add(synset);
-            String[] synonyms = synset.split("\s");
+            String[] synonyms = synset.split(" ");
             for (String noun: synonyms) {
                 if (this.nounsBST.contains(noun)) {
                     this.nounsBST.get(noun).add(id);
@@ -78,7 +83,7 @@ public class WordNet {
             throw new IllegalArgumentException();
         }
         String sca = this.sap(nounA, nounB);
-        String nounSca = sca.split("\s")[0];
+        String nounSca = sca.split(" ")[0];
         ArrayList<Integer> idScas = nounsBST.get(nounSca);
         int idSCA = -1;
         for (int id: idScas) {
@@ -112,12 +117,18 @@ public class WordNet {
         }
         ArrayList<Integer> idAS = this.nounsBST.get(nounA);
         ArrayList<Integer> idBS = this.nounsBST.get(nounB);
-        BreadthFirstDirectedPaths paths = new BreadthFirstDirectedPaths(this.reverse, this.root);
         Queue<Integer> q = new Queue<Integer>();
         q.enqueue(this.root);
-        int currentVertex = -1;
+        int result = -1;
+        int minDist = Integer.MAX_VALUE;
         while (!q.isEmpty()) {
-            currentVertex = q.dequeue();
+            int currentVertex = q.dequeue();
+            BreadthFirstDirectedPaths bfdp = new BreadthFirstDirectedPaths(this.reverse, currentVertex);
+            int distance = shortestPath(bfdp, idAS, idBS);
+            if (distance < minDist) {
+                minDist = distance;
+                result = currentVertex;
+            }
             Iterable<Integer> adjacentVertices = this.reverse.adj(currentVertex);
             for (int vertex: adjacentVertices) {
                 if (isACommonAncestor(vertex, idAS, idBS)) {
@@ -125,11 +136,11 @@ public class WordNet {
                 }
             }
         }
-        return this.synsetsList.get(currentVertex);
+        return this.synsetsList.get(result);
     }
 
-    private boolean isACommonAncestor(int v, Iterable<Integer> nounsA, Iterable<Integer> nounsB) {
-        BreadthFirstDirectedPaths bfdp = new BreadthFirstDirectedPaths(this.reverse, v);
+    private boolean isACommonAncestor(int vertex, Iterable<Integer> nounsA, Iterable<Integer> nounsB) {
+        BreadthFirstDirectedPaths bfdp = new BreadthFirstDirectedPaths(this.reverse, vertex);
         boolean resultA = false;
         for (int noun: nounsA) {
             if (bfdp.hasPathTo(noun)) {
@@ -145,6 +156,22 @@ public class WordNet {
             }
         }
         return resultA && resultB;
+    }
+
+    private static int shortestPath(BreadthFirstDirectedPaths bfdp, Iterable<Integer> v, Iterable<Integer> w) {
+        int minDistV = Integer.MAX_VALUE;
+        for (int vertex: v) {
+            int distance = bfdp.distTo(vertex);
+            if (distance < minDistV) { minDistV = distance;
+            }
+        }
+        int minDistW = Integer.MAX_VALUE;
+        for (int vertex: w) {
+            int distance = bfdp.distTo(vertex);
+            if (distance < minDistW) { minDistW = distance;
+            }
+        }
+        return minDistV + minDistW;
     }
 
     // do unit testing of this class
