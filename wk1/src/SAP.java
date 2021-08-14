@@ -9,9 +9,9 @@ import java.util.Set;
 
 public class SAP {
 
-    private Digraph g;
-    private int v;
-    private Digraph r;
+    private final Digraph g;
+    private final int v;
+    private final Digraph r;
 
     // constructor takes a digraph (not necessarily a DAG)
     public SAP(Digraph G) {
