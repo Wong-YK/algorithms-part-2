@@ -231,6 +231,44 @@ public class SAPTest {
     }
 
     @Test
+    // length of the path from a vertex to itself
+    public void lengthTest3a() {
+        Digraph g = new Digraph(7);
+        g.addEdge(1, 0);
+        g.addEdge(2, 0);
+        g.addEdge(3, 0);
+        g.addEdge(3, 1);
+        g.addEdge(4, 1);
+        g.addEdge(5, 4);
+        g.addEdge(6, 4);
+        SAP sap = new SAP(g);
+        assertEquals(0, sap.length(2, 2));
+    }
+
+    @Test
+    // length test from autograder
+    public void lengthTest3b() {
+        Digraph g = new Digraph(15);
+        g.addEdge(1, 2);
+        g.addEdge(2, 3);
+        g.addEdge(3, 4);
+        g.addEdge(4, 5);
+        g.addEdge(5, 6);
+        g.addEdge(6, 1);
+        g.addEdge(7, 8);
+        g.addEdge(8, 9);
+        g.addEdge(9, 10);
+        g.addEdge(10, 11);
+        g.addEdge(11, 12);
+        g.addEdge(12, 8);
+        g.addEdge(13, 14);
+        g.addEdge(14, 0);
+        g.addEdge(0, 11);
+        SAP sap = new SAP(g);
+        assertEquals(3, sap.length(10, 7));
+    }
+
+    @Test
     // subsets method; common ancestor is 1 with a SAP of length 2
     public void lengthTest4() {
         Digraph g = new Digraph(7);
