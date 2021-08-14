@@ -51,6 +51,7 @@ public class WordNetTest {
         assertEquals("organism", commonAncestor);
     }
 
+
     @Test
     //distance of 2
     public void distanceTest1() {
@@ -72,6 +73,11 @@ public class WordNetTest {
         assertEquals(4, wn.distance("human", "fungus"));
     }
 
-
+    @Test
+    //distance of 2; autograder test
+    public void distanceTest4() {
+        WordNet wn = new WordNet("synsets6.txt", "hypernyms6TwoAncestors.txt");
+        assertEquals(2, wn.distance("b", "f"));
+    }
 
 }

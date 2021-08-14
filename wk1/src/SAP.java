@@ -5,8 +5,6 @@ import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.SET;
 
-import java.util.Set;
-
 public class SAP {
 
     private final Digraph g;
@@ -52,7 +50,7 @@ public class SAP {
                     visited.add(adjacentVertex);
                 }
             }
-            if (bfdpV.hasPathTo(currentVertex) && bfdpW.hasPathTo(currentVertex)) {
+            if (bfdpW.hasPathTo(currentVertex)) {
                 int distance = bfdpV.distTo(currentVertex) + bfdpW.distTo(currentVertex);
                 if (distance < minDistance) {
                     minVertex = currentVertex;
