@@ -37,6 +37,31 @@ public class SAP {
     // a common ancestor of v and w that participates in a shortest ancestral path; -1 if no such path
     public int ancestor(int v, int w) {
         if ( v < -1 || v >= this.v || w < -1 || w >= this.v ) {throw new IllegalArgumentException(); }
+        BreadthFirstDirectedPaths bfdpV = new BreadthFirstDirectedPaths(this.g, v);
+        BreadthFirstDirectedPaths bfdpW = new BreadthFirstDirectedPaths(this.g, w);
+        Queue<Integer> q = new Queue<>();
+        q.enqueue(v);
+        int minVertex = -1;
+        int minDistance = Integer.MAX_VALUE;
+        SET<Integer> visited = new SET<Integer>();
+        while (!q.isEmpty()) {
+            int currentVertex = q.dequeue();
+            for (int adjacentVertex: this.g.adj(currentVertex)) {
+                if (!visited.contains(adjacentVertex)) {
+                    q.enqueue(adjacentVertex);
+                    visited.add(adjacentVertex);
+                }
+            }
+            if (bfdpV.hasPathTo(currentVertex) && bfdpW.hasPathTo(currentVertex)) {
+                int distance = bfdpV.distTo(currentVertex) + bfdpW.distTo(currentVertex);
+                if (distance < minDistance) {
+                    minVertex = currentVertex;
+                    minDistance = distance;
+                }
+            }
+        }
+        return minVertex;
+        /*
         SET<Integer> pathV = new SET<Integer>();
         SET<Integer> pathW = new SET<Integer>();
         Queue<Integer> qV = new Queue<Integer>();
@@ -71,15 +96,16 @@ public class SAP {
                 pathW.add(nextPathVertexW);
             }
             for (int nextVertexV: nextVerticesV) {
-                if (pathW.contains(nextVertexV)) { return nextVertexV; }
+                //if (pathW.contains(nextVertexV)) { return nextVertexV; }
                 if (!pathV.contains(nextVertexV)) { qV.enqueue(nextVertexV); }
             }
             for (int nextVertexW: nextVerticesW) {
-                if (pathV.contains(nextVertexW)) { return nextVertexW; }
+                //if (pathV.contains(nextVertexW)) { return nextVertexW; }
                 if (!pathW.contains(nextVertexW)) { qW.enqueue(nextVertexW); }
             }
         }
         return -1;
+        */
     }
 
     // length of shortest ancestral path between any vertex in v and any vertex in w; -1 if no such path
