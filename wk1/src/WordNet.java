@@ -3,7 +3,6 @@ import edu.princeton.cs.algs4.Digraph;
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.Topological;
 import edu.princeton.cs.algs4.BreadthFirstDirectedPaths;
-import edu.princeton.cs.algs4.Queue;
 import java.util.ArrayList;
 
 public class WordNet {
@@ -11,6 +10,7 @@ public class WordNet {
     private final BST<String, ArrayList<Integer>> nounsBST = new BST<String, ArrayList<Integer>>();
     private final ArrayList<String> synsetsList = new ArrayList<String>();
     private final Digraph dag;
+    private final SAP sap;
     private final Digraph reverse;
     private int root;
 
@@ -49,6 +49,7 @@ public class WordNet {
                 this.dag.addEdge(ss, hns);
             }
         }
+        this.sap = new SAP(this.dag);
         this.reverse = this.dag.reverse();
         Topological t = new Topological(this.reverse);
         if (!t.hasOrder()) {
@@ -79,6 +80,10 @@ public class WordNet {
 
     // distance between nounA and nounB (defined below)
     public int distance(String nounA, String nounB) {
+        ArrayList<Integer> idAs = nounsBST.get(nounA);
+        ArrayList<Integer> idBs = nounsBST.get(nounB);
+        return this.sap.length(idAs, idBs);
+        /*
         if (nounA == null || nounB == null || !this.isNoun(nounA) || !this.isNoun(nounB)) {
             throw new IllegalArgumentException();
         }
@@ -105,13 +110,17 @@ public class WordNet {
                 }
             }
         }
-
         return minDist;
+        */
     }
 
     // a synset (second field of synsets.txt) that is the common ancestor of nounA and nounB
     // in a shortest ancestral path (defined below)
     public String sap(String nounA, String nounB) {
+        ArrayList<Integer> idAS = this.nounsBST.get(nounA);
+        ArrayList<Integer> idBS = this.nounsBST.get(nounB);
+        return synsetsList.get(this.sap.ancestor(idAS, idBS));
+        /*
         if (nounA == null || nounB == null || !this.isNoun(nounA) || !this.isNoun(nounB)) {
             throw new IllegalArgumentException();
         }
@@ -137,6 +146,7 @@ public class WordNet {
             }
         }
         return this.synsetsList.get(result);
+        */
     }
 
     private boolean isACommonAncestor(int vertex, Iterable<Integer> nounsA, Iterable<Integer> nounsB) {
