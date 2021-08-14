@@ -61,51 +61,6 @@ public class SAP {
             }
         }
         return minVertex;
-        /*
-        SET<Integer> pathV = new SET<Integer>();
-        SET<Integer> pathW = new SET<Integer>();
-        Queue<Integer> qV = new Queue<Integer>();
-        qV.enqueue(v);
-        Queue<Integer> qW = new Queue<Integer>();
-        qW.enqueue(w);
-        while (!qV.isEmpty() || !qW.isEmpty()) {
-            SET<Integer> nextVerticesV = new SET<Integer>();
-            SET<Integer> nextPathVerticesV = new SET<Integer>();
-            SET<Integer> nextVerticesW = new SET<Integer>();
-            SET<Integer> nextPathVerticesW = new SET<Integer>();
-            while (!qV.isEmpty() || !qW.isEmpty()) {
-                if (!qV.isEmpty()) {
-                    int currentVertexV = qV.dequeue();
-                    nextPathVerticesV.add(currentVertexV);
-                    Iterable<Integer> adjacentVerticesV = this.g.adj(currentVertexV);
-                    for (int adjacentVertexV: adjacentVerticesV) { nextVerticesV.add(adjacentVertexV); }
-                }
-                if (!qW.isEmpty()) {
-                    int currentVertexW = qW.dequeue();
-                    nextPathVerticesW.add(currentVertexW);
-                    Iterable<Integer> adjacentVerticesW = this.g.adj(currentVertexW);
-                    for (int adjacentVertexW: adjacentVerticesW) { nextVerticesW.add(adjacentVertexW); }
-                }
-            }
-            for (int nextPathVertexV: nextPathVerticesV) {
-                if (pathW.contains(nextPathVertexV)) { return nextPathVertexV; }
-                pathV.add(nextPathVertexV);
-            }
-            for (int nextPathVertexW: nextPathVerticesW) {
-                if (pathV.contains(nextPathVertexW)) { return nextPathVertexW; }
-                pathW.add(nextPathVertexW);
-            }
-            for (int nextVertexV: nextVerticesV) {
-                //if (pathW.contains(nextVertexV)) { return nextVertexV; }
-                if (!pathV.contains(nextVertexV)) { qV.enqueue(nextVertexV); }
-            }
-            for (int nextVertexW: nextVerticesW) {
-                //if (pathV.contains(nextVertexW)) { return nextVertexW; }
-                if (!pathW.contains(nextVertexW)) { qW.enqueue(nextVertexW); }
-            }
-        }
-        return -1;
-        */
     }
 
     // length of shortest ancestral path between any vertex in v and any vertex in w; -1 if no such path
@@ -115,6 +70,8 @@ public class SAP {
         for (Object vertex: w) { if (vertex == null) { throw new IllegalArgumentException(); } }
         Digraph copyDigraph = this.copyVirtual(v, w);
         SAP copySap = new SAP(copyDigraph);
+        int length = copySap.length(this.v, this.v + 1);
+        if (length < 0) { return -1; }
         return copySap.length(this.v, this.v + 1) - 2;
     }
 
