@@ -1,5 +1,12 @@
 import edu.princeton.cs.algs4.BreadthFirstDirectedPaths;
-import edu.princeton.cs.algs4.*;
+import edu.princeton.cs.algs4.Digraph;
+import edu.princeton.cs.algs4.Topological;
+import edu.princeton.cs.algs4.Queue;
+import edu.princeton.cs.algs4.In;
+import edu.princeton.cs.algs4.StdOut;
+import edu.princeton.cs.algs4.SET;
+
+import java.util.Set;
 
 public class SAP {
 
@@ -39,23 +46,49 @@ public class SAP {
     // a common ancestor of v and w that participates in a shortest ancestral path; -1 if no such path
     public int ancestor(int v, int w) {
         if ( v < -1 || v >= this.v || w < -1 || w >= this.v ) {throw new IllegalArgumentException(); }
-        BreadthFirstDirectedPaths bfdpV = new BreadthFirstDirectedPaths(this.g, v);
-        BreadthFirstDirectedPaths bfdpW = new BreadthFirstDirectedPaths(this.g, w);
-        if ( !(bfdpV.hasPathTo(this.root) && bfdpW.hasPathTo(this.root)) ) {
-            return -1;
-        }
-        Queue<Integer> q = new Queue<Integer>();
-        q.enqueue(this.root);
-        while (true) {
-            int currentVertex = q.dequeue();
-            Iterable<Integer> adjacentVertices = this.r.adj(currentVertex);
-            for (int adjacentVertex: adjacentVertices) {
-                if (bfdpV.hasPathTo(adjacentVertex) && bfdpW.hasPathTo(adjacentVertex)) {
-                    q.enqueue(adjacentVertex);
+        SET<Integer> pathV = new SET<Integer>();
+        SET<Integer> pathW = new SET<Integer>();
+        Queue<Integer> qV = new Queue<Integer>();
+        qV.enqueue(v);
+        Queue<Integer> qW = new Queue<Integer>();
+        qW.enqueue(w);
+        while (!qV.isEmpty() || !qW.isEmpty()) {
+            SET<Integer> nextVerticesV = new SET<Integer>();
+            SET<Integer> nextPathVerticesV = new SET<Integer>();
+            SET<Integer> nextVerticesW = new SET<Integer>();
+            SET<Integer> nextPathVerticesW = new SET<Integer>();
+            while (!qV.isEmpty() || !qW.isEmpty()) {
+                if (!qV.isEmpty()) {
+                    int currentVertexV = qV.dequeue();
+                    nextPathVerticesV.add(currentVertexV);
+                    Iterable<Integer> adjacentVerticesV = this.g.adj(currentVertexV);
+                    for (int adjacentVertexV: adjacentVerticesV) { nextVerticesV.add(adjacentVertexV); }
+                }
+                if (!qW.isEmpty()) {
+                    int currentVertexW = qW.dequeue();
+                    nextPathVerticesW.add(currentVertexW);
+                    Iterable<Integer> adjacentVerticesW = this.g.adj(currentVertexW);
+                    for (int adjacentVertexW: adjacentVerticesW) { nextVerticesW.add(adjacentVertexW); }
                 }
             }
-            if (q.isEmpty()) {return currentVertex; }
+            for (int nextPathVertexV: nextPathVerticesV) {
+                if (pathW.contains(nextPathVertexV)) { return nextPathVertexV; }
+                pathV.add(nextPathVertexV);
+            }
+            for (int nextPathVertexW: nextPathVerticesW) {
+                if (pathV.contains(nextPathVertexW)) { return nextPathVertexW; }
+                pathW.add(nextPathVertexW);
+            }
+            for (int nextVertexV: nextVerticesV) {
+                if (pathW.contains(nextVertexV)) { return nextVertexV; }
+                if (!pathV.contains(nextVertexV)) { qV.enqueue(nextVertexV); }
+            }
+            for (int nextVertexW: nextVerticesW) {
+                if (pathV.contains(nextVertexW)) { return nextVertexW; }
+                if (!pathW.contains(nextVertexW)) { qW.enqueue(nextVertexW); }
+            }
         }
+        return -1;
     }
 
     // length of shortest ancestral path between any vertex in v and any vertex in w; -1 if no such path

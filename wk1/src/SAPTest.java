@@ -1,4 +1,5 @@
 import edu.princeton.cs.algs4.Digraph;
+import edu.princeton.cs.algs4.In;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -38,7 +39,7 @@ public class SAPTest {
     }
 
     @Test
-    // no common ancestor
+    // no common ancestor; digraph contains a cycle
     public void ancestorTest3() {
         Digraph g = new Digraph(7);
         g.addEdge(1, 0);
@@ -64,6 +65,18 @@ public class SAPTest {
         g.addEdge(6, 4);
         SAP sap = new SAP(g);
         assertEquals(1, sap.ancestor(1, 3));
+    }
+
+    @Test
+    // digraph1.txt using autograder test
+    public void ancestorTest4a() {
+        In in = new In("digraph1.txt");
+        Digraph G = new Digraph(in);
+        SAP sap = new SAP(G);
+        int v = 6;
+        int w = 6;
+        int ancestor = sap.ancestor(v, w);
+        assertEquals(6, ancestor);
     }
 
 
