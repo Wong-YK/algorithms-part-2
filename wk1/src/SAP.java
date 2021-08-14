@@ -1,6 +1,5 @@
 import edu.princeton.cs.algs4.BreadthFirstDirectedPaths;
 import edu.princeton.cs.algs4.Digraph;
-import edu.princeton.cs.algs4.Topological;
 import edu.princeton.cs.algs4.Queue;
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdOut;
@@ -13,7 +12,6 @@ public class SAP {
     private Digraph g;
     private int v;
     private Digraph r;
-    private int root;
 
     // constructor takes a digraph (not necessarily a DAG)
     public SAP(Digraph G) {
@@ -23,13 +21,6 @@ public class SAP {
         this.g = G;
         this.v = this.g.V();
         this.r = G.reverse();
-        Topological t = new Topological(this.r);
-        for (int vertex: t.order()) {
-            if (this.r.outdegree(vertex) != 0) {
-                this.root = vertex;
-                break;
-            }
-        }
     }
 
     // length of shortest ancestral path between v and w; -1 if no such path
