@@ -1,3 +1,4 @@
+import edu.princeton.cs.algs4.DirectedEdge;
 import edu.princeton.cs.algs4.EdgeWeightedDigraph;
 import edu.princeton.cs.algs4.Picture;
 import java.awt.*;
@@ -5,13 +6,28 @@ import java.awt.*;
 public class SeamCarver {
 
     private Picture p;
-    private EdgeWeightedDigraph g;
+    private EdgeWeightedDigraph vertical;
+
 
     // create a seam carver object based on the given picture
     public SeamCarver(Picture picture) {
         this.p = picture;
-        EdgeWeightedDigraph g = new EdgeWeightedDigraph(picture().height() * picture.width() + 2);
-        this.g = g;
+        int numVertices = picture().height() * picture.width();
+        EdgeWeightedDigraph vertical = new EdgeWeightedDigraph(numVertices + 2);
+        for (int col = 0; col < picture.width(); col++) {
+            for (int row = 0; row < picture.height() - 1; row++) {
+                double energy = this.energy(col, row);
+                int vertexFrom = col + (row * this.width());
+                vertical.addEdge(new DirectedEdge(vertexFrom, (col - 1) + ((row + 1) * this.width()), energy));
+                vertical.addEdge(new DirectedEdge(vertexFrom, col * ((row + 1) + this.width()), energy));
+                vertical.addEdge(new DirectedEdge(vertexFrom, (col + 1) + ((row + 1) * this.width()), energy));
+            }
+        }
+        for (int col = 0; col < this.width(); col++) {
+            int vertexFrom = numVertices;
+
+        }
+        this.vertical = vertical;
     }
 
     // current picture
