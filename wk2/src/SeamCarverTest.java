@@ -27,4 +27,20 @@ public class SeamCarverTest {
         SeamCarver sc = new SeamCarver(p);
         assertEquals(1000.0, sc.energy(p.width() / 2, p.height()), 0.001);
     }
+
+    @Test
+    // non-edge pixel
+    public void energyTest4() {
+        Picture p = new Picture("https://coursera.cs.princeton.edu/algs4/assignments/seam/files/3x4.png");
+        SeamCarver sc = new SeamCarver(p);
+        assertEquals(Math.sqrt(52024), sc.energy(1, 2), 0.001);
+    }
+
+    @Test
+    // non-edge pixel
+    public void energyTest5() {
+        Picture p = new Picture("https://coursera.cs.princeton.edu/algs4/assignments/seam/files/3x4.png");
+        SeamCarver sc = new SeamCarver(p);
+        assertEquals(Math.sqrt(52225), sc.energy(1, 1), 0.001);
+    }
 }
