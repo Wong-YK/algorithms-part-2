@@ -47,7 +47,7 @@ public class SeamCarverTest {
     @Test
     // 6 by 5 image from specification
     public void findHorizontalSeamTest1() {
-        int[] expected = { 2, 2, 1, 2, 1, 2 };
+        int[] expected = { 3, 2, 1, 2, 1, 2 };
         Picture p = new Picture("https://coursera.cs.princeton.edu/algs4/assignments/seam/files/6x5.png");
         SeamCarver sc = new SeamCarver(p);
         int[] actual = sc.findHorizontalSeam();

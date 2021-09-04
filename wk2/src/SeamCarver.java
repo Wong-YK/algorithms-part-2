@@ -1,3 +1,4 @@
+import edu.princeton.cs.algs4.DijkstraSP;
 import edu.princeton.cs.algs4.DirectedEdge;
 import edu.princeton.cs.algs4.EdgeWeightedDigraph;
 import edu.princeton.cs.algs4.Picture;
@@ -6,6 +7,7 @@ import java.awt.*;
 public class SeamCarver {
 
     private Picture p;
+    private int v;
     private EdgeWeightedDigraph vertical;
     private EdgeWeightedDigraph horizontal;
 
@@ -13,28 +15,50 @@ public class SeamCarver {
     // create a seam carver object based on the given picture
     public SeamCarver(Picture picture) {
         this.p = picture;
-        int numVertices = picture().height() * picture.width();
-        EdgeWeightedDigraph vertical = new EdgeWeightedDigraph(numVertices + 2);
+        this.v = picture().height() * picture.width();
+        //edge weighted digraph with veritcal paths
+        EdgeWeightedDigraph vertical = new EdgeWeightedDigraph(this.v + 2);
         for (int col = 0; col < picture.width(); col++) {
             for (int row = 0; row < picture.height() - 1; row++) {
                 double energy = this.energy(col, row);
                 int vertexFrom = col + (row * this.width());
                 if (col != 0) {
-                    vertical.addEdge(new DirectedEdge(vertexFrom, (col - 1) + ((row + 1) * this.width()), energy));
+                    vertical.addEdge(new DirectedEdge(vertexFrom, vertexFrom + this.width() - 1, energy));
                 }
-                vertical.addEdge(new DirectedEdge(vertexFrom, col + ((row + 1) * this.width()), energy));
-                if (col != this.width()) {
-                    vertical.addEdge(new DirectedEdge(vertexFrom, (col + 1) + ((row + 1) * this.width()), energy));
+                if (col != this.width() - 1) {
+                    vertical.addEdge(new DirectedEdge(vertexFrom, vertexFrom + this.width() + 1, energy));
                 }
+                vertical.addEdge(new DirectedEdge(vertexFrom, vertexFrom + this.width(), energy));
+
             }
         }
         //edges going from top and to bottom virtual vertices
         for (int col = 0; col < this.width(); col++) {
-            vertical.addEdge(new DirectedEdge(numVertices, col, 0));
-            vertical.addEdge(new DirectedEdge(numVertices + 1, col + ((this.height() - 1) * this.width()), this.energy(col, this.height() - 1)));
+            vertical.addEdge(new DirectedEdge(this.v, col, 0));
+            vertical.addEdge(new DirectedEdge(col + ((this.height() - 1) * this.width()), this.v + 1, this.energy(col, this.height() - 1)));
         }
+        //edge weighted digraph with horizontal paths
         this.vertical = vertical;
-        EdgeWeightedDigraph horizontal = new EdgeWeightedDigraph(numVertices + 2);
+        EdgeWeightedDigraph horizontal = new EdgeWeightedDigraph(this.v + 2);
+        for (int col = 0; col < this.width() - 1; col++) {
+            for (int row = 0; row < this.height(); row++) {
+                double energy = this.energy(col, row);
+                int vertexFrom = col + (row * this.width());
+                if (row != 0) {
+                    horizontal.addEdge(new DirectedEdge(vertexFrom, (vertexFrom - this.width() + 1), energy));
+                }
+                if (row != this.height() - 1) {
+                    horizontal.addEdge(new DirectedEdge(vertexFrom, (vertexFrom + this.width() + 1), energy));
+                }
+                horizontal.addEdge(new DirectedEdge(vertexFrom, vertexFrom + 1, energy));
+
+            }
+        }
+        //edges going from lhs and to rhs virtual vertices
+        for (int row = 0; row < this.height(); row++) {
+            horizontal.addEdge(new DirectedEdge(this.v, row * this.width(), 0));
+            horizontal.addEdge(new DirectedEdge((row * this.width()) + (this.width() - 1), this.v + 1, 1000));
+        }
         this.horizontal = horizontal;
     }
 
@@ -50,7 +74,7 @@ public class SeamCarver {
     // energy of pixel at column x and row y
     public double energy(int x, int y) {
         // the energy of outer pixels is 1000
-        if (x == 0 || x == this.width() || y == 0 || y == this.height()) {
+        if (x == 0 || x == this.width() - 1 || y == 0 || y == this.height() - 1) {
             return 1000.0;
         }
         // otherwise the energy of a pixel is calculated using the dual-gradient energy function
@@ -70,7 +94,16 @@ public class SeamCarver {
     }
 
     // sequence of indices for horizontal seam
-    public int[] findHorizontalSeam() {return null;}
+    public int[] findHorizontalSeam() {
+        DijkstraSP dsp = new DijkstraSP(this.horizontal, this.v);
+        int[] result = new int[this.width()];
+        int index = 0;
+        for (DirectedEdge edge: dsp.pathTo(this.v + 1)) {
+            if (edge.to() == this.v + 1) { index ++; }
+            else { result[index++] = edge.to() / this.width(); }
+        }
+        return result;
+    }
 
     // sequence of indices for vertical seam
     public int[] findVerticalSeam() {return null;}
