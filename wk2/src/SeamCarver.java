@@ -7,6 +7,7 @@ public class SeamCarver {
 
     private Picture p;
     private EdgeWeightedDigraph vertical;
+    private EdgeWeightedDigraph horizontal;
 
 
     // create a seam carver object based on the given picture
@@ -18,16 +19,23 @@ public class SeamCarver {
             for (int row = 0; row < picture.height() - 1; row++) {
                 double energy = this.energy(col, row);
                 int vertexFrom = col + (row * this.width());
-                vertical.addEdge(new DirectedEdge(vertexFrom, (col - 1) + ((row + 1) * this.width()), energy));
-                vertical.addEdge(new DirectedEdge(vertexFrom, col * ((row + 1) + this.width()), energy));
-                vertical.addEdge(new DirectedEdge(vertexFrom, (col + 1) + ((row + 1) * this.width()), energy));
+                if (col != 0) {
+                    vertical.addEdge(new DirectedEdge(vertexFrom, (col - 1) + ((row + 1) * this.width()), energy));
+                }
+                vertical.addEdge(new DirectedEdge(vertexFrom, col + ((row + 1) * this.width()), energy));
+                if (col != this.width()) {
+                    vertical.addEdge(new DirectedEdge(vertexFrom, (col + 1) + ((row + 1) * this.width()), energy));
+                }
             }
         }
+        //edges going from top and to bottom virtual vertices
         for (int col = 0; col < this.width(); col++) {
-            int vertexFrom = numVertices;
-
+            vertical.addEdge(new DirectedEdge(numVertices, col, 0));
+            vertical.addEdge(new DirectedEdge(numVertices + 1, col + ((this.height() - 1) * this.width()), this.energy(col, this.height() - 1)));
         }
         this.vertical = vertical;
+        EdgeWeightedDigraph horizontal = new EdgeWeightedDigraph(numVertices + 2);
+        this.horizontal = horizontal;
     }
 
     // current picture
