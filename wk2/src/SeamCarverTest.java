@@ -55,4 +55,16 @@ public class SeamCarverTest {
             assertEquals(expected[i], actual[i]);
         }
     }
+
+    @Test
+    // 6 by 5 image from specification
+    public void findVerticalSeamTest1() {
+        int[] expected = { 3, 4, 3, 2, 2 };
+        Picture p = new Picture("https://coursera.cs.princeton.edu/algs4/assignments/seam/files/6x5.png");
+        SeamCarver sc = new SeamCarver(p);
+        int[] actual = sc.findVerticalSeam();
+        for (int i = 0; i < expected.length || i < actual.length; i++) {
+            assertEquals(expected[i], actual[i]);
+        }
+    }
 }
