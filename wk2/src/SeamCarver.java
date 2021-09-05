@@ -106,7 +106,16 @@ public class SeamCarver {
     }
 
     // sequence of indices for vertical seam
-    public int[] findVerticalSeam() {return null;}
+    public int[] findVerticalSeam() {
+        DijkstraSP dsp = new DijkstraSP(this.vertical, this.v);
+        int[] result = new int[this.height()];
+        int index = 0;
+        for (DirectedEdge edge: dsp.pathTo(this.v + 1)) {
+            if (edge.to() == this.v + 1) { index++; }
+            else {result[index++] = edge.to() % this.width(); }
+        }
+        return result;
+    }
 
     // remove horizontal seam from current picture
     public void removeHorizontalSeam(int[] seam) {}
