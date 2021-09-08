@@ -16,30 +16,10 @@ public class SeamCarver {
     public SeamCarver(Picture picture) {
         this.p = picture;
         this.v = picture().height() * picture.width();
-        //edge weighted digraph with veritcal paths
-        this.vertical = createVerticalPathsDigraph(this.p, this.v + 2);
         //edge weighted digraph with horizontal paths
-        EdgeWeightedDigraph horizontal = new EdgeWeightedDigraph(this.v + 2);
-        for (int row = 0; row < this.height(); row++) {
-            for (int col = 0; col < this.width() - 1; col++) {
-                double energy = this.energy(col, row);
-                int vertexFrom = col + (row * this.width());
-                if (row != 0) {
-                    horizontal.addEdge(new DirectedEdge(vertexFrom, (vertexFrom - this.width() + 1), energy));
-                }
-                if (row != this.height() - 1) {
-                    horizontal.addEdge(new DirectedEdge(vertexFrom, (vertexFrom + this.width() + 1), energy));
-                }
-                horizontal.addEdge(new DirectedEdge(vertexFrom, vertexFrom + 1, energy));
-
-            }
-        }
-        //edges going from lhs and to rhs virtual vertices
-        for (int row = 0; row < this.height(); row++) {
-            horizontal.addEdge(new DirectedEdge(this.v, row * this.width(), 0));
-            horizontal.addEdge(new DirectedEdge((row * this.width()) + (this.width() - 1), this.v + 1, 1000));
-        }
-        this.horizontal = horizontal;
+        this.horizontal = createHorizontalPathsDigraph();
+        //edge weighted digraph with veritcal paths
+        this.vertical = createVerticalPathsDigraph();
     }
 
     // current picture
@@ -115,15 +95,42 @@ public class SeamCarver {
         }
         this.p = newPicture;
         this.v = this.v - this.width();
+        // TODO update other instance variables to complete method
     }
 
     // remove vertical seam from current picture
     public void removeVerticalSeam(int[] seam) {}
 
-    private EdgeWeightedDigraph createVerticalPathsDigraph(Picture picture, int numVertices) {
-        EdgeWeightedDigraph result = new EdgeWeightedDigraph(numVertices + 2);
-        for (int row = 0; row < picture.height() - 1; row++) {
-            for (int col = 0; col < picture.width(); col++) {
+    // create edge weighted digraph with horizontal paths
+    private EdgeWeightedDigraph createHorizontalPathsDigraph() {
+        EdgeWeightedDigraph result = new EdgeWeightedDigraph(this.v + 2);
+        for (int row = 0; row < this.p.height(); row++) {
+            for (int col = 0; col < this.p.width() - 1; col++) {
+                double energy = this.energy(col, row);
+                int vertexFrom = col + (row * this.width());
+                if (row != 0) {
+                    result.addEdge(new DirectedEdge(vertexFrom, (vertexFrom - this.width() + 1), energy));
+                }
+                if (row != this.height() - 1) {
+                    result.addEdge(new DirectedEdge(vertexFrom, (vertexFrom + this.width() + 1), energy));
+                }
+                result.addEdge(new DirectedEdge(vertexFrom, vertexFrom + 1, energy));
+
+            }
+        }
+        //edges going from lhs and to rhs virtual vertices
+        for (int row = 0; row < this.height(); row++) {
+            result.addEdge(new DirectedEdge(this.v, row * this.width(), 0));
+            result.addEdge(new DirectedEdge((row * this.width()) + (this.width() - 1), this.v + 1, 1000));
+        }
+        return result;
+    }
+
+    // create edge weighted digraph with vertical paths
+    private EdgeWeightedDigraph createVerticalPathsDigraph() {
+        EdgeWeightedDigraph result = new EdgeWeightedDigraph(this.v + 2);
+        for (int row = 0; row < this.p.height() - 1; row++) {
+            for (int col = 0; col < this.p.width(); col++) {
                 double energy = this.energy(col, row);
                 int vertexFrom = col + (row * this.width());
                 if (col != 0) {
