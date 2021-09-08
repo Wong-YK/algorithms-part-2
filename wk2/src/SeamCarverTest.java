@@ -18,7 +18,7 @@ public class SeamCarverTest {
     public void energyTest2() {
         Picture p = new Picture("https://coursera.cs.princeton.edu/algs4/assignments/seam/files/3x4.png");
         SeamCarver sc = new SeamCarver(p);
-        assertEquals(1000.0, sc.energy(p.width(), p.height() / 2), 0.001);
+        assertEquals(1000.0, sc.energy(p.width() - 1, p.height() / 2), 0.001);
     }
 
     @Test
@@ -26,7 +26,7 @@ public class SeamCarverTest {
     public void energyTest3() {
         Picture p = new Picture("https://coursera.cs.princeton.edu/algs4/assignments/seam/files/3x4.png");
         SeamCarver sc = new SeamCarver(p);
-        assertEquals(1000.0, sc.energy(p.width() / 2, p.height()), 0.001);
+        assertEquals(1000.0, sc.energy(p.width() / 2, p.height() - 1), 0.001);
     }
 
     @Test
@@ -93,4 +93,5 @@ public class SeamCarverTest {
         }
         assertEquals(p2, sc.p);
     }
+
 }
