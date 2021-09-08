@@ -2,11 +2,11 @@ import edu.princeton.cs.algs4.DijkstraSP;
 import edu.princeton.cs.algs4.DirectedEdge;
 import edu.princeton.cs.algs4.EdgeWeightedDigraph;
 import edu.princeton.cs.algs4.Picture;
-import java.awt.*;
+import java.awt.Color;
 
 public class SeamCarver {
 
-    private Picture p;
+    public Picture p;
     private int v;
     private EdgeWeightedDigraph vertical;
     private EdgeWeightedDigraph horizontal;
@@ -18,8 +18,8 @@ public class SeamCarver {
         this.v = picture().height() * picture.width();
         //edge weighted digraph with veritcal paths
         EdgeWeightedDigraph vertical = new EdgeWeightedDigraph(this.v + 2);
-        for (int col = 0; col < picture.width(); col++) {
-            for (int row = 0; row < picture.height() - 1; row++) {
+        for (int row = 0; row < picture.height() - 1; row++) {
+            for (int col = 0; col < picture.width(); col++) {
                 double energy = this.energy(col, row);
                 int vertexFrom = col + (row * this.width());
                 if (col != 0) {
@@ -40,8 +40,8 @@ public class SeamCarver {
         //edge weighted digraph with horizontal paths
         this.vertical = vertical;
         EdgeWeightedDigraph horizontal = new EdgeWeightedDigraph(this.v + 2);
-        for (int col = 0; col < this.width() - 1; col++) {
-            for (int row = 0; row < this.height(); row++) {
+        for (int row = 0; row < this.height(); row++) {
+            for (int col = 0; col < this.width() - 1; col++) {
                 double energy = this.energy(col, row);
                 int vertexFrom = col + (row * this.width());
                 if (row != 0) {
@@ -118,7 +118,24 @@ public class SeamCarver {
     }
 
     // remove horizontal seam from current picture
-    public void removeHorizontalSeam(int[] seam) {}
+    public void removeHorizontalSeam(int[] seam) {
+        Color[][] newColors = new Color[this.height() - 1][this.width()];
+        for (int col = 0; col < this.width(); col++) {
+            for (int row1 = 0, row2 = 0; row1 < this.height(); row1++) {
+                if ( !(seam[col] == row1) ) {
+                    newColors[row2++][col] = this.p.get(col, row1);
+                }
+            }
+        }
+        Picture newPicture = new Picture(this.width(), this.height() - 1);
+        for (int row = 0; row < this.height() - 1; row++) {
+            for (int col = 0; col < this.width(); col++) {
+                newPicture.set(col, row, newColors[row][col]);
+            }
+        }
+        this.p = newPicture;
+        this.v = this.v - this.width();
+    }
 
     // remove vertical seam from current picture
     public void removeVerticalSeam(int[] seam) {}
