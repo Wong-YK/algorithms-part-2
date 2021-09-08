@@ -100,7 +100,21 @@ public class SeamCarver {
     }
 
     // remove vertical seam from current picture
-    public void removeVerticalSeam(int[] seam) {}
+    public void removeVerticalSeam(int[] seam) {
+        Picture newPicture = new Picture(this.width() - 1, this.height());
+        for (int row = 0; row < this.height(); row++) {
+            for (int col1 = 0, col2 = 0; col1 < this.width(); col1++) {
+                if ( seam[row] != col1) {
+                    Color c = this.p.get(col1, row);
+                    newPicture.set(col2++, row, c);
+                }
+            }
+        }
+        this.p = newPicture;
+        this.v = this.v - this.height();
+        this.horizontal = createHorizontalPathsDigraph();
+        this.vertical = createVerticalPathsDigraph();
+    }
 
     // create edge weighted digraph with horizontal paths
     private EdgeWeightedDigraph createHorizontalPathsDigraph() {
