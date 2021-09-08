@@ -17,28 +17,8 @@ public class SeamCarver {
         this.p = picture;
         this.v = picture().height() * picture.width();
         //edge weighted digraph with veritcal paths
-        EdgeWeightedDigraph vertical = new EdgeWeightedDigraph(this.v + 2);
-        for (int row = 0; row < picture.height() - 1; row++) {
-            for (int col = 0; col < picture.width(); col++) {
-                double energy = this.energy(col, row);
-                int vertexFrom = col + (row * this.width());
-                if (col != 0) {
-                    vertical.addEdge(new DirectedEdge(vertexFrom, vertexFrom + this.width() - 1, energy));
-                }
-                if (col != this.width() - 1) {
-                    vertical.addEdge(new DirectedEdge(vertexFrom, vertexFrom + this.width() + 1, energy));
-                }
-                vertical.addEdge(new DirectedEdge(vertexFrom, vertexFrom + this.width(), energy));
-
-            }
-        }
-        //edges going from top and to bottom virtual vertices
-        for (int col = 0; col < this.width(); col++) {
-            vertical.addEdge(new DirectedEdge(this.v, col, 0));
-            vertical.addEdge(new DirectedEdge(col + ((this.height() - 1) * this.width()), this.v + 1, this.energy(col, this.height() - 1)));
-        }
+        this.vertical = createVerticalPathsDigraph(this.p, this.v + 2);
         //edge weighted digraph with horizontal paths
-        this.vertical = vertical;
         EdgeWeightedDigraph horizontal = new EdgeWeightedDigraph(this.v + 2);
         for (int row = 0; row < this.height(); row++) {
             for (int col = 0; col < this.width() - 1; col++) {
@@ -139,6 +119,30 @@ public class SeamCarver {
 
     // remove vertical seam from current picture
     public void removeVerticalSeam(int[] seam) {}
+
+    private EdgeWeightedDigraph createVerticalPathsDigraph(Picture picture, int numVertices) {
+        EdgeWeightedDigraph result = new EdgeWeightedDigraph(numVertices + 2);
+        for (int row = 0; row < picture.height() - 1; row++) {
+            for (int col = 0; col < picture.width(); col++) {
+                double energy = this.energy(col, row);
+                int vertexFrom = col + (row * this.width());
+                if (col != 0) {
+                    result.addEdge(new DirectedEdge(vertexFrom, vertexFrom + this.width() - 1, energy));
+                }
+                if (col != this.width() - 1) {
+                    result.addEdge(new DirectedEdge(vertexFrom, vertexFrom + this.width() + 1, energy));
+                }
+                result.addEdge(new DirectedEdge(vertexFrom, vertexFrom + this.width(), energy));
+
+            }
+        }
+        //edges going from top and to bottom virtual vertices
+        for (int col = 0; col < this.width(); col++) {
+            result.addEdge(new DirectedEdge(this.v, col, 0));
+            result.addEdge(new DirectedEdge(col + ((this.height() - 1) * this.width()), this.v + 1, this.energy(col, this.height() - 1)));
+        }
+        return result;
+    }
 
     //  unit testing (optional)
     public static void main(String[] args) {}
