@@ -8,8 +8,8 @@ public class SeamCarver {
 
     public Picture p;
     private int v;
-    private EdgeWeightedDigraph vertical;
     private EdgeWeightedDigraph horizontal;
+    private EdgeWeightedDigraph vertical;
 
 
     // create a seam carver object based on the given picture
@@ -95,7 +95,8 @@ public class SeamCarver {
         }
         this.p = newPicture;
         this.v = this.v - this.width();
-        // TODO update other instance variables to complete method
+        this.horizontal = createHorizontalPathsDigraph();
+        this.vertical = createVerticalPathsDigraph();
     }
 
     // remove vertical seam from current picture
