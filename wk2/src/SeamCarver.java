@@ -6,7 +6,7 @@ import java.awt.Color;
 
 public class SeamCarver {
 
-    public Picture p;
+    private Picture p;
     private int v;
     private EdgeWeightedDigraph horizontal;
     private EdgeWeightedDigraph vertical;
@@ -14,6 +14,9 @@ public class SeamCarver {
 
     // create a seam carver object based on the given picture
     public SeamCarver(Picture picture) {
+        if (picture == null) {
+            throw new IllegalArgumentException();
+        }
         this.p = picture;
         this.v = picture().height() * picture.width();
         //edge weighted digraph with horizontal paths
@@ -33,6 +36,9 @@ public class SeamCarver {
 
     // energy of pixel at column x and row y
     public double energy(int x, int y) {
+        if (x < 0 || x > this.width() - 1 || y < 0 || y > this.height() - 1) {
+            throw new IllegalArgumentException();
+        }
         // the energy of outer pixels is 1000
         if (x == 0 || x == this.width() - 1 || y == 0 || y == this.height() - 1) {
             return 1000.0;
@@ -77,9 +83,11 @@ public class SeamCarver {
         return result;
     }
 
-    // TODO refactor in line with removeVerticalSeam so that second nested loop is not needed
     // remove horizontal seam from current picture
     public void removeHorizontalSeam(int[] seam) {
+        if (seam == null) {
+            throw new IllegalArgumentException();
+        }
         Picture newPicture = new Picture(this.width(), this.height() - 1);
         for (int col = 0; col < this.width(); col++) {
             for (int row1 = 0, row2 = 0; row1 < this.height(); row1++) {
@@ -96,6 +104,9 @@ public class SeamCarver {
 
     // remove vertical seam from current picture
     public void removeVerticalSeam(int[] seam) {
+        if (seam == null) {
+            throw new IllegalArgumentException();
+        }
         Picture newPicture = new Picture(this.width() - 1, this.height());
         for (int row = 0; row < this.height(); row++) {
             for (int col1 = 0, col2 = 0; col1 < this.width(); col1++) {
@@ -160,6 +171,27 @@ public class SeamCarver {
         }
         return result;
     }
+
+    private boolean isValidSeam(int[] seam, boolean horizontal) {
+        if (seam == null) { return false; }
+        if (horizontal) {
+            if (seam.length != this.width()) { return false; }
+            for (int row: seam) {
+                if (row < 0 || row > this.height() - 1) { return false; }
+            }
+        }
+        if (!horizontal) {
+            if (seam.length != this.height()) { return false; }
+            for (int col: seam) {
+                if (col < 0 || col > this.width() - 1) { return false; }
+            }
+        }
+        for (int i = 1; i < seam.length; i++) {
+            if (Math.abs(seam[i] - seam[i - 1]) != 1) { return false; }
+        }
+        return true;
+    }
+
 
     //  unit testing (optional)
     public static void main(String[] args) {}
