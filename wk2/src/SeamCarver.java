@@ -6,7 +6,7 @@ import java.awt.Color;
 
 public class SeamCarver {
 
-    private Picture p;
+    public Picture p;
     private int v;
     private EdgeWeightedDigraph horizontal;
     private EdgeWeightedDigraph vertical;
@@ -187,7 +187,7 @@ public class SeamCarver {
             }
         }
         for (int i = 1; i < seam.length; i++) {
-            if (Math.abs(seam[i] - seam[i - 1]) != 1) { return false; }
+            if ( !(Math.abs(seam[i] - seam[i - 1]) <= 1) ) { return false; }
         }
         return true;
     }
