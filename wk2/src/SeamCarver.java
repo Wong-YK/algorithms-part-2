@@ -77,20 +77,15 @@ public class SeamCarver {
         return result;
     }
 
+    // TODO refactor in line with removeVerticalSeam so that second nested loop is not needed
     // remove horizontal seam from current picture
     public void removeHorizontalSeam(int[] seam) {
-        Color[][] newColors = new Color[this.height() - 1][this.width()];
+        Picture newPicture = new Picture(this.width(), this.height() - 1);
         for (int col = 0; col < this.width(); col++) {
             for (int row1 = 0, row2 = 0; row1 < this.height(); row1++) {
                 if ( !(seam[col] == row1) ) {
-                    newColors[row2++][col] = this.p.get(col, row1);
+                    newPicture.set(col, row2++, this.p.get(col, row1));
                 }
-            }
-        }
-        Picture newPicture = new Picture(this.width(), this.height() - 1);
-        for (int row = 0; row < this.height() - 1; row++) {
-            for (int col = 0; col < this.width(); col++) {
-                newPicture.set(col, row, newColors[row][col]);
             }
         }
         this.p = newPicture;
