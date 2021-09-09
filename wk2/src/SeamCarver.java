@@ -85,7 +85,7 @@ public class SeamCarver {
 
     // remove horizontal seam from current picture
     public void removeHorizontalSeam(int[] seam) {
-        if (seam == null) {
+        if (!isValidSeam(seam, true)) {
             throw new IllegalArgumentException();
         }
         Picture newPicture = new Picture(this.width(), this.height() - 1);
@@ -104,7 +104,7 @@ public class SeamCarver {
 
     // remove vertical seam from current picture
     public void removeVerticalSeam(int[] seam) {
-        if (seam == null) {
+        if (!isValidSeam(seam, false)) {
             throw new IllegalArgumentException();
         }
         Picture newPicture = new Picture(this.width() - 1, this.height());
