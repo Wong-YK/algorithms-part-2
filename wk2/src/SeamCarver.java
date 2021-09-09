@@ -6,10 +6,8 @@ import java.awt.Color;
 
 public class SeamCarver {
 
-    public Picture p;
+    private Picture p;
     private int v;
-    private EdgeWeightedDigraph horizontal;
-    private EdgeWeightedDigraph vertical;
 
 
     // create a seam carver object based on the given picture
@@ -19,10 +17,6 @@ public class SeamCarver {
         }
         this.p = picture;
         this.v = picture().height() * picture.width();
-        //edge weighted digraph with horizontal paths
-        this.horizontal = createHorizontalPathsDigraph();
-        //edge weighted digraph with veritcal paths
-        this.vertical = createVerticalPathsDigraph();
     }
 
     // current picture
@@ -61,7 +55,8 @@ public class SeamCarver {
 
     // sequence of indices for horizontal seam
     public int[] findHorizontalSeam() {
-        DijkstraSP dsp = new DijkstraSP(this.horizontal, this.v);
+        EdgeWeightedDigraph horizontal = createHorizontalPathsDigraph();
+        DijkstraSP dsp = new DijkstraSP(horizontal, this.v);
         int[] result = new int[this.width()];
         int index = 0;
         for (DirectedEdge edge: dsp.pathTo(this.v + 1)) {
@@ -73,7 +68,8 @@ public class SeamCarver {
 
     // sequence of indices for vertical seam
     public int[] findVerticalSeam() {
-        DijkstraSP dsp = new DijkstraSP(this.vertical, this.v);
+        EdgeWeightedDigraph vertical = createVerticalPathsDigraph();
+        DijkstraSP dsp = new DijkstraSP(vertical, this.v);
         int[] result = new int[this.height()];
         int index = 0;
         for (DirectedEdge edge: dsp.pathTo(this.v + 1)) {
@@ -98,8 +94,6 @@ public class SeamCarver {
         }
         this.p = newPicture;
         this.v = this.v - this.width();
-        this.horizontal = createHorizontalPathsDigraph();
-        this.vertical = createVerticalPathsDigraph();
     }
 
     // remove vertical seam from current picture
@@ -118,8 +112,6 @@ public class SeamCarver {
         }
         this.p = newPicture;
         this.v = this.v - this.height();
-        this.horizontal = createHorizontalPathsDigraph();
-        this.vertical = createVerticalPathsDigraph();
     }
 
     // create edge weighted digraph with horizontal paths
