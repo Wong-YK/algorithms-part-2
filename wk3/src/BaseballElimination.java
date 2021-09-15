@@ -2,6 +2,11 @@ import edu.princeton.cs.algs4.StdOut;
 
 public class BaseballElimination {
 
+    private final int[] w;
+    private final int[] l;
+    private final int[] r;
+    private final int[][] g;
+
     //create a baseball division from given filename in format specified below
     public BaseballElimination(String filename) {}
 
