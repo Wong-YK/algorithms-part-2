@@ -1,5 +1,6 @@
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdOut;
+import java.util.Arrays;
 
 public class BaseballElimination {
 
@@ -32,10 +33,10 @@ public class BaseballElimination {
     }
 
     //number of teams
-    public int numberOfTeams() { return -1; }
+    public int numberOfTeams() { return this.t.length; }
 
     //all teams
-    public Iterable<String> teams() { return null; }
+    public Iterable<String> teams() { return Arrays.asList(this.t); }
 
     //number of wins for given team
     public int wins(String team) { return -1; }
