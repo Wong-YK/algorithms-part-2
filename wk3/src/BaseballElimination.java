@@ -1,14 +1,35 @@
+import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdOut;
 
 public class BaseballElimination {
 
+    private final String[] t;
     private final int[] w;
     private final int[] l;
     private final int[] r;
     private final int[][] g;
 
     //create a baseball division from given filename in format specified below
-    public BaseballElimination(String filename) {}
+    public BaseballElimination(String filename) {
+        In in = new In(filename);
+        int numLines = Integer.parseInt(in.readLine());
+        this.t = new String[numLines];
+        this.w = new int[numLines];
+        this.l = new int[numLines];
+        this.r = new int[numLines];
+        this.g = new int[numLines][numLines];
+        for (int lineNum = 0; lineNum < numLines; lineNum++) {
+            String[] line = in.readLine().split("\s+");
+            int index = 0;
+            this.t[lineNum] = line[index++];
+            this.w[lineNum] = Integer.parseInt(line[index++]);
+            this.l[lineNum] = Integer.parseInt(line[index++]);
+            this.r[lineNum] = Integer.parseInt(line[index++]);
+            while (index - 4 < numLines) {
+                this.g[lineNum][index - 4] = Integer.parseInt(line[index++]);
+            }
+        }
+    }
 
     //number of teams
     public int numberOfTeams() { return -1; }
@@ -35,18 +56,5 @@ public class BaseballElimination {
     public Iterable<String> certificateOfElimination(String team) { return null; }
 
     public static void main(String[] args) {
-        BaseballElimination division = new BaseballElimination(args[0]);
-        for (String team : division.teams()) {
-            if (division.isEliminated(team)) {
-                StdOut.print(team + " is eliminated by the subset R = { ");
-                for (String t : division.certificateOfElimination(team)) {
-                    StdOut.print(t + " ");
-                }
-                StdOut.println("}");
-            }
-            else {
-                StdOut.println(team + " is not eliminated");
-            }
-        }
     }
 }
