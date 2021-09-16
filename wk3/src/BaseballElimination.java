@@ -1,3 +1,5 @@
+import edu.princeton.cs.algs4.FlowEdge;
+import edu.princeton.cs.algs4.FlowNetwork;
 import edu.princeton.cs.algs4.In;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -64,7 +66,45 @@ public class BaseballElimination {
     }
 
     //is given team eliminated?
-    public boolean isEliminated(String team) { return false; }
+    public boolean isEliminated(String team) {
+        //trivial elimination
+        int maxWins = this.wins(team) + this.remaining(team);
+        for (String t: this.teams()) {
+            if (this.wins(t) > maxWins) { return true; }
+        }
+        //non-trivial elimination
+        int teamIndex = this.getTeamIndex(team);
+        int games = ((this.numberOfTeams() * (this.numberOfTeams() - 1)) / 2) - (this.numberOfTeams() - 1);
+        FlowNetwork fn = new FlowNetwork(games + (this.numberOfTeams() - 1) + 2);
+        int s = games + (this.numberOfTeams() - 1);
+        int t = games + this.numberOfTeams();
+        //add edges from s to game vertices and from game vertices to team vertices
+        for (int gameVertex = 0, indent = 1, row = 0; row < this.numberOfTeams() - 1; indent++, row++) {
+            if (row != teamIndex) {
+                for (int col = indent; col < this.numberOfTeams(); col++) {
+                    if (col != teamIndex) {
+                        int capacity = this.g[row][col];
+                        FlowEdge e1 = new FlowEdge(s, gameVertex, capacity);
+                        FlowEdge e2 = new FlowEdge(gameVertex, row, Integer.MAX_VALUE);
+                        FlowEdge e3 = new FlowEdge(gameVertex, col, Integer.MAX_VALUE);
+                        fn.addEdge(e1);
+                        fn.addEdge(e2);
+                        fn.addEdge(e3);
+                        gameVertex++;
+                    }
+                }
+            }
+        }
+        //add edges from team vertices to t
+        for (int otherTeamIndex = 0; otherTeamIndex < this.numberOfTeams() - 1; otherTeamIndex++) {
+            if (otherTeamIndex != teamIndex) {
+                int capacity = maxWins - this.w[otherTeamIndex];
+                FlowEdge e = new FlowEdge(otherTeamIndex + games, t, capacity);
+                fn.addEdge(e);
+            }
+        }
+        return false;
+    }
 
     //subset R of teams that eliminates given team; null if not eliminated
     public Iterable<String> certificateOfElimination(String team) { return null; }
