@@ -69,6 +69,7 @@ public class BaseballElimination {
     //subset R of teams that eliminates given team; null if not eliminated
     public Iterable<String> certificateOfElimination(String team) { return null; }
 
+    //returns index of team
     private int getTeamIndex(String team) {
         for (int index = 0; index < this.numberOfTeams(); index++) {
             if (team.equals(this.t.get(index))) { return index; }
