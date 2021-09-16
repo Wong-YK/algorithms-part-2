@@ -1,5 +1,6 @@
 import edu.princeton.cs.algs4.FlowEdge;
 import edu.princeton.cs.algs4.FlowNetwork;
+import edu.princeton.cs.algs4.FordFulkerson;
 import edu.princeton.cs.algs4.In;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -85,8 +86,8 @@ public class BaseballElimination {
                     if (col != teamIndex) {
                         int capacity = this.g[row][col];
                         FlowEdge e1 = new FlowEdge(s, gameVertex, capacity);
-                        FlowEdge e2 = new FlowEdge(gameVertex, row, Integer.MAX_VALUE);
-                        FlowEdge e3 = new FlowEdge(gameVertex, col, Integer.MAX_VALUE);
+                        FlowEdge e2 = new FlowEdge(gameVertex, row + games, Integer.MAX_VALUE);
+                        FlowEdge e3 = new FlowEdge(gameVertex, col + games, Integer.MAX_VALUE);
                         fn.addEdge(e1);
                         fn.addEdge(e2);
                         fn.addEdge(e3);
@@ -103,7 +104,20 @@ public class BaseballElimination {
                 fn.addEdge(e);
             }
         }
-        return false;
+        FordFulkerson ff = new FordFulkerson(fn, s, t);
+        double maxFlow = ff.value();
+        int remainingGames = 0;
+        for (int team1 = 0; team1 < this.numberOfTeams(); team1++) {
+            if (team1 != teamIndex) {
+                for (int team2 = 0; team2 < this.numberOfTeams(); team2++) {
+                    if (team2 != teamIndex) {
+                        remainingGames += this.g[team1][team2];
+                    }
+                }
+            }
+        }
+        remainingGames /= 2;
+        return maxFlow < (double) remainingGames;
     }
 
     //subset R of teams that eliminates given team; null if not eliminated
