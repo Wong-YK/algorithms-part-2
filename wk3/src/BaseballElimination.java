@@ -3,7 +3,6 @@ import edu.princeton.cs.algs4.FlowNetwork;
 import edu.princeton.cs.algs4.FordFulkerson;
 import edu.princeton.cs.algs4.In;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class BaseballElimination {
 
@@ -74,8 +73,39 @@ public class BaseballElimination {
             if (this.wins(t) > maxWins) { return true; }
         }
         //non-trivial elimination
+        FordFulkerson ff = this.createEliminationFlowNetwork(team);
+        int teamIndex = this.getTeamIndex(team);
+        double maxFlow = ff.value();
+        int remainingGames = 0;
+        for (int row = 0, indent = 1; row < this.numberOfTeams() - 1; row++, indent++) {
+            if (row != teamIndex) {
+                for (int col = indent; col < this.numberOfTeams(); col++) {
+                    if (col != teamIndex) { remainingGames += this.g[row][col]; }
+                }
+            }
+        }
+        return maxFlow < (double) remainingGames;
+    }
+
+    //subset R of teams that eliminates given team; null if not eliminated
+    public Iterable<String> certificateOfElimination(String team) {
+        return null;
+    }
+
+    //returns index of team
+    private int getTeamIndex(String team) {
+        for (int index = 0; index < this.numberOfTeams(); index++) {
+            if (team.equals(this.t.get(index))) { return index; }
+        }
+        throw new IllegalArgumentException();
+    }
+
+    //creates elimination flow network
+    private FordFulkerson createEliminationFlowNetwork(String team) {
+        int maxWins = this.wins(team) + this.remaining(team);
         int teamIndex = this.getTeamIndex(team);
         int games = ((this.numberOfTeams() * (this.numberOfTeams() - 1)) / 2) - (this.numberOfTeams() - 1);
+        //create flow network
         FlowNetwork fn = new FlowNetwork(games + (this.numberOfTeams() - 1) + 2);
         int s = games + (this.numberOfTeams() - 1);
         int t = games + this.numberOfTeams();
@@ -104,31 +134,7 @@ public class BaseballElimination {
                 fn.addEdge(e);
             }
         }
-        FordFulkerson ff = new FordFulkerson(fn, s, t);
-        double maxFlow = ff.value();
-        int remainingGames = 0;
-        for (int team1 = 0; team1 < this.numberOfTeams(); team1++) {
-            if (team1 != teamIndex) {
-                for (int team2 = 0; team2 < this.numberOfTeams(); team2++) {
-                    if (team2 != teamIndex) {
-                        remainingGames += this.g[team1][team2];
-                    }
-                }
-            }
-        }
-        remainingGames /= 2;
-        return maxFlow < (double) remainingGames;
-    }
-
-    //subset R of teams that eliminates given team; null if not eliminated
-    public Iterable<String> certificateOfElimination(String team) { return null; }
-
-    //returns index of team
-    private int getTeamIndex(String team) {
-        for (int index = 0; index < this.numberOfTeams(); index++) {
-            if (team.equals(this.t.get(index))) { return index; }
-        }
-        throw new IllegalArgumentException();
+        return new FordFulkerson(fn, s, t);
     }
 
     public static void main(String[] args) {
