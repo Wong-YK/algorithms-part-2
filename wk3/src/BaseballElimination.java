@@ -89,8 +89,17 @@ public class BaseballElimination {
 
     //subset R of teams that eliminates given team; null if not eliminated
     public Iterable<String> certificateOfElimination(String team) {
-        FordFulkerson ff = this.createEliminationFlowNetwork(team);
         ArrayList<String> result = new ArrayList<String>();
+        //trivial cases
+        int maxWins = this.wins(team) + this.remaining(team);
+        for (String t: this.teams()) {
+            if (this.wins(t) > maxWins) {
+                result.add(t);
+                return result;
+            }
+        }
+        //non-trivial cases
+        FordFulkerson ff = this.createEliminationFlowNetwork(team);
         int games = this.getNumGameVertices();
         int teamIndex = this.getTeamIndex(team);
         for (int teamVertex = games; teamVertex < this.numberOfTeams() + games - 1; teamVertex++) {

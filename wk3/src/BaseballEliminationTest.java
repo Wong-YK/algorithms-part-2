@@ -27,4 +27,12 @@ public class BaseballEliminationTest {
                     | team.equals("Boston") | team.equals("Toronto"));
         }
     }
+
+    @Test
+    //Non-trivial case (Montreal example from specification)
+    public void certificateOfEliminationTest2() {
+        BaseballElimination be = new BaseballElimination("teams4.txt");
+        Iterable<String> r = be.certificateOfElimination("Montreal");
+        for (String team: r) { assertTrue(team.equals("Atlanta")); }
+    }
 }
