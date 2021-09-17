@@ -89,7 +89,17 @@ public class BaseballElimination {
 
     //subset R of teams that eliminates given team; null if not eliminated
     public Iterable<String> certificateOfElimination(String team) {
-        return null;
+        FordFulkerson ff = this.createEliminationFlowNetwork(team);
+        ArrayList<String> result = new ArrayList<String>();
+        int games = this.getNumGameVertices();
+        int teamIndex = this.getTeamIndex(team);
+        for (int teamVertex = games; teamVertex < this.numberOfTeams() + games - 1; teamVertex++) {
+            if (ff.inCut(teamVertex)) {
+                if (teamVertex >= teamIndex + games) { result.add(this.t.get((teamVertex + 1) - games)); }
+                else { result.add(this.t.get(teamVertex - games)); }
+            }
+        }
+        return result;
     }
 
     //returns index of team
@@ -100,11 +110,16 @@ public class BaseballElimination {
         throw new IllegalArgumentException();
     }
 
+    //returns number of game vertices
+    private int getNumGameVertices() {
+        return ((this.numberOfTeams() * (this.numberOfTeams() - 1)) / 2) - (this.numberOfTeams() - 1);
+    }
+
     //creates elimination flow network
     private FordFulkerson createEliminationFlowNetwork(String team) {
         int maxWins = this.wins(team) + this.remaining(team);
         int teamIndex = this.getTeamIndex(team);
-        int games = ((this.numberOfTeams() * (this.numberOfTeams() - 1)) / 2) - (this.numberOfTeams() - 1);
+        int games = this.getNumGameVertices();
         //create flow network
         FlowNetwork fn = new FlowNetwork(games + (this.numberOfTeams() - 1) + 2);
         int s = games + (this.numberOfTeams() - 1);
