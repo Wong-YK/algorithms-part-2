@@ -23,16 +23,25 @@ public class BaseballEliminationTest {
         BaseballElimination be = new BaseballElimination("teams5.txt");
         Iterable<String> r = be.certificateOfElimination("Detroit");
         for (String team: r) {
-            assertTrue(team.equals("New_York") | team.equals("Baltimore")
-                    | team.equals("Boston") | team.equals("Toronto"));
+            assertTrue(team.equals("New_York") || team.equals("Baltimore")
+                    || team.equals("Boston") || team.equals("Toronto"));
         }
     }
 
     @Test
-    //Non-trivial case (Montreal example from specification)
+    //Trivial case (Montreal example from specification)
     public void certificateOfEliminationTest2() {
         BaseballElimination be = new BaseballElimination("teams4.txt");
         Iterable<String> r = be.certificateOfElimination("Montreal");
         for (String team: r) { assertTrue(team.equals("Atlanta")); }
     }
+
+    @Test
+    //Trivial case (Phliladelphia example from specification)
+    public void certificateOfEliminationTest3() {
+        BaseballElimination be = new BaseballElimination("teams4.txt");
+        Iterable<String> r = be.certificateOfElimination("Philadelphia");
+        for (String team: r) { assertTrue(team.equals("Atlanta") || team.equals("New_York")); }
+    }
+
 }

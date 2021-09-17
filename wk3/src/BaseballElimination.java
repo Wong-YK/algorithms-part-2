@@ -140,8 +140,12 @@ public class BaseballElimination {
                     if (col != teamIndex) {
                         int capacity = this.g[row][col];
                         FlowEdge e1 = new FlowEdge(s, gameVertex, capacity);
-                        FlowEdge e2 = new FlowEdge(gameVertex, row + games, Integer.MAX_VALUE);
-                        FlowEdge e3 = new FlowEdge(gameVertex, col + games, Integer.MAX_VALUE);
+                        int teamVertex1 = row + games;
+                        if (row > teamIndex) { teamVertex1--; }
+                        int teamVertex2 = col + games;
+                        if (col > teamIndex) { teamVertex2--; }
+                        FlowEdge e2 = new FlowEdge(gameVertex, teamVertex1, Integer.MAX_VALUE);
+                        FlowEdge e3 = new FlowEdge(gameVertex, teamVertex2, Integer.MAX_VALUE);
                         fn.addEdge(e1);
                         fn.addEdge(e2);
                         fn.addEdge(e3);
@@ -151,10 +155,12 @@ public class BaseballElimination {
             }
         }
         //add edges from team vertices to t
-        for (int otherTeamIndex = 0; otherTeamIndex < this.numberOfTeams() - 1; otherTeamIndex++) {
+        for (int otherTeamIndex = 0; otherTeamIndex < this.numberOfTeams(); otherTeamIndex++) {
             if (otherTeamIndex != teamIndex) {
                 int capacity = maxWins - this.w[otherTeamIndex];
-                FlowEdge e = new FlowEdge(otherTeamIndex + games, t, capacity);
+                int otherTeamVertex = otherTeamIndex + games;
+                if (otherTeamIndex >= teamIndex) { otherTeamVertex--; }
+                FlowEdge e = new FlowEdge(otherTeamVertex, t, capacity);
                 fn.addEdge(e);
             }
         }
