@@ -22,7 +22,7 @@ public class BaseballElimination {
         this.r = new int[numLines];
         this.g = new int[numLines][numLines];
         for (int lineNum = 0; lineNum < numLines; lineNum++) {
-            String[] line = in.readLine().split("\s+");
+            String[] line = in.readLine().trim().split(" +");
             int index = 0;
             this.t.add(line[index++]);
             this.w[lineNum] = Integer.parseInt(line[index++]);

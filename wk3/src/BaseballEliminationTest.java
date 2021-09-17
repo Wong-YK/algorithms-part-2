@@ -4,6 +4,13 @@ import static org.junit.Assert.*;
 public class BaseballEliminationTest {
 
     @Test
+    // "Atlanta" and teams10.txt
+    public void numberOfTeamsTest1() {
+        BaseballElimination be = new BaseballElimination("teams10.txt");
+        assertEquals(10, be.numberOfTeams());
+    }
+
+    @Test
     //Trivial case
     public void isEliminatedTest1() {
         BaseballElimination be = new BaseballElimination("teams4.txt");
@@ -37,7 +44,7 @@ public class BaseballEliminationTest {
     }
 
     @Test
-    //Trivial case (Phliladelphia example from specification)
+    //Non-trivial case (Phliladelphia example from specification)
     public void certificateOfEliminationTest3() {
         BaseballElimination be = new BaseballElimination("teams4.txt");
         Iterable<String> r = be.certificateOfElimination("Philadelphia");
