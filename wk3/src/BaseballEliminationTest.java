@@ -16,4 +16,15 @@ public class BaseballEliminationTest {
         BaseballElimination be = new BaseballElimination("teams5.txt");
         assertTrue(be.isEliminated("Detroit"));
     }
+
+    @Test
+    //Non-trivial case (Detroit example from specification)
+    public void certificateOfEliminationTest1() {
+        BaseballElimination be = new BaseballElimination("teams5.txt");
+        Iterable<String> r = be.certificateOfElimination("Detroit");
+        for (String team: r) {
+            assertTrue(team.equals("New_York") | team.equals("Baltimore")
+                    | team.equals("Boston") | team.equals("Toronto"));
+        }
+    }
 }
